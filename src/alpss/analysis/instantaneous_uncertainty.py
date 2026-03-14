@@ -134,6 +134,20 @@ def instantaneous_uncertainty_analysis(sdf_out, vc_out, cen, **inputs):
     # calculate the estimated peak to peak amplitude at every time
     inst_amp = env_max_interp - env_min_interp
 
+    # Signal quality gate: flag points where the carrier amplitude has collapsed
+    # relative to its initial (pre-signal) level. These points have unreliable
+    # phase unwrapping and should be treated with caution.
+    initial_amp = np.median(inst_amp[:max(1, len(inst_amp) // 10)])  # first 10% of DOI
+    signal_quality_threshold = inputs.get("signal_quality_threshold", 0.1)  # fraction of initial
+    signal_valid = inst_amp > (signal_quality_threshold * initial_amp)
+    n_valid = np.sum(signal_valid)
+    n_total = len(signal_valid)
+    if n_valid < n_total:
+        logging.info(
+            "Signal quality gate: %d/%d points (%.1f%%) have carrier amplitude above %.0f%% of initial",
+            n_valid, n_total, 100 * n_valid / n_total, 100 * signal_quality_threshold,
+        )
+
     # calculate the estimated noise fraction at every time
     # https://doi.org/10.1063/12.0000870
     inst_noise = np.std(noise) / (inst_amp / 2)
@@ -161,6 +175,7 @@ def instantaneous_uncertainty_analysis(sdf_out, vc_out, cen, **inputs):
         "env_max_interp": env_max_interp,
         "env_min_interp": env_min_interp,
         "inst_amp": inst_amp,
+        "signal_valid": signal_valid,
         "inst_noise": inst_noise,
         "tau": tau,
         "freq_uncert_scaling": freq_uncert_scaling,

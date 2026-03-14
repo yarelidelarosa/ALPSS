@@ -19,6 +19,7 @@ def spall_analysis(vc_out, iua_out, **inputs):
         density = inputs["density"]
         freq_uncert = iua_out["freq_uncert"]
         vel_uncert = iua_out["vel_uncert"]
+        signal_valid = iua_out.get("signal_valid", np.ones(len(time_f), dtype=bool))
 
         # get the global peak velocity
         peak_velocity_idx = np.argmax(velocity_f_smooth)
@@ -53,10 +54,14 @@ def spall_analysis(vc_out, iua_out, **inputs):
 
             rel_min_local = signal.argrelmin(search_slice, order=pb_neighbors)[0]
 
+            # Also exclude points where the carrier has dropped out
+            search_valid = signal_valid[peak_velocity_idx:max_pullback_idx]
+
             # Filter: must be positive and less than peak velocity
             valid_mask = (
                 (search_slice[rel_min_local] > 0) &
-                (search_slice[rel_min_local] < peak_velocity)
+                (search_slice[rel_min_local] < peak_velocity) &
+                (search_valid[rel_min_local])  # carrier must still be present
             )
             valid_minima = rel_min_local[valid_mask]
 

@@ -23,40 +23,25 @@ def plot_results(
     **inputs,
 ):
 
-    # create the figure with constrained_layout for proper colorbar and label spacing
-    plot_figsize = inputs["plot_figsize"]
-    # Enforce minimum height: at least 2/3 of width for 3-row layout
-    fig_w = plot_figsize[0]
-    fig_h = max(plot_figsize[1], fig_w * 0.6)
-
+    # create the figure and axes — uses subplot2grid for the wide dashboard layout
     fig = plt.figure(
-        figsize=(fig_w, fig_h), dpi=inputs["plot_dpi"], constrained_layout=True
+        figsize=inputs["plot_figsize"], dpi=inputs["plot_dpi"], clear=True
     )
-
-    # 3 rows x 5 columns with explicit proportions
-    # Columns: [diag-left, diag-right, center, center, right-panel]
-    # Row heights: top row slightly shorter (no colorbars), middle/bottom equal
-    gs = fig.add_gridspec(
-        3, 5,
-        width_ratios=[1, 1, 1.2, 1.2, 1],
-        height_ratios=[0.9, 1, 1],
-        hspace=0.08,
-        wspace=0.08,
-    )
-
-    ax1 = fig.add_subplot(gs[0, 0])       # voltage data
-    ax2 = fig.add_subplot(gs[0, 1])       # noise distribution histogram
-    ax3 = fig.add_subplot(gs[1, 0])       # imported voltage spectrogram
-    ax4 = fig.add_subplot(gs[1, 1])       # thresholded spectrogram
-    ax5 = fig.add_subplot(gs[2, 0])       # spectrogram of the ROI
-    ax6 = fig.add_subplot(gs[2, 1])       # filtered spectrogram of the ROI
-    ax7 = fig.add_subplot(gs[0, 2:4])     # voltage in the ROI
-    ax8 = fig.add_subplot(gs[1:3, 2:4])   # velocity overlaid with spectrogram
-    ax9 = ax8.twinx()                     # spectrogram overlaid with velocity
-    ax10 = fig.add_subplot(gs[0, 4])      # noise fraction
-    ax11 = ax10.twinx()                   # velocity uncertainty
-    ax12 = fig.add_subplot(gs[1, 4])      # velocity trace and spall points
-    ax13 = fig.add_subplot(gs[2, 4])      # results table
+    ax1 = plt.subplot2grid((3, 5), (0, 0))  # voltage data
+    ax2 = plt.subplot2grid((3, 5), (0, 1))  # noise distribution histogram
+    ax3 = plt.subplot2grid((3, 5), (1, 0))  # imported voltage spectrogram
+    ax4 = plt.subplot2grid((3, 5), (1, 1))  # thresholded spectrogram
+    ax5 = plt.subplot2grid((3, 5), (2, 0))  # spectrogram of the ROI
+    ax6 = plt.subplot2grid((3, 5), (2, 1))  # filtered spectrogram of the ROI
+    ax7 = plt.subplot2grid((3, 5), (0, 2), colspan=2)  # voltage in the ROI
+    ax8 = plt.subplot2grid(
+        (3, 5), (1, 2), colspan=2, rowspan=2
+    )  # velocity overlaid with spectrogram
+    ax9 = ax8.twinx()  # spectrogram overlaid with velocity
+    ax10 = plt.subplot2grid((3, 5), (0, 4))  # noise fraction
+    ax11 = ax10.twinx()  # velocity uncertainty
+    ax12 = plt.subplot2grid((3, 5), (1, 4))  # velocity trace and spall points
+    ax13 = plt.subplot2grid((3, 5), (2, 4), colspan=1, rowspan=1)  # results table
 
     # voltage data
     ax1.plot(
@@ -116,7 +101,7 @@ def plot_results(
         ],
         cmap=inputs["cmap"],
     )
-    fig.colorbar(plt3, ax=ax3, label="Power (dBm)", shrink=0.9)
+    fig.colorbar(plt3, ax=ax3, label="Power (dBm)")
     anchor = [sdf_out["t_doi_start"] / 1e-9, sdf_out["f_doi"][0] / 1e9]
     width = sdf_out["t_doi_end"] / 1e-9 - sdf_out["t_doi_start"] / 1e-9
     height = sdf_out["f_doi"][-1] / 1e9 - sdf_out["f_doi"][0] / 1e9
@@ -174,7 +159,7 @@ def plot_results(
         ],
         cmap=inputs["cmap"],
     )
-    fig.colorbar(plt5, ax=ax5, label="Power (dBm)", shrink=0.9)
+    fig.colorbar(plt5, ax=ax5, label="Power (dBm)")
     ax5.axvline(sdf_out["t_start_detected"] / 1e-9, ls="--", c="r")
     ax5.axvline(sdf_out["t_start_corrected"] / 1e-9, ls="-", c="r")
     if inputs["start_time_user"] == "otsu":
@@ -201,7 +186,7 @@ def plot_results(
         ],
         cmap=inputs["cmap"],
     )
-    fig.colorbar(plt6, ax=ax6, label="Power (dBm)", shrink=0.9)
+    fig.colorbar(plt6, ax=ax6, label="Power (dBm)")
     ax6.axvline(sdf_out["t_start_detected"] / 1e-9, ls="--", c="r")
     ax6.axvline(sdf_out["t_start_corrected"] / 1e-9, ls="-", c="r")
     ax6.set_ylim([inputs["freq_min"] / 1e9, inputs["freq_max"] / 1e9])
@@ -416,6 +401,13 @@ def plot_results(
     table1.scale(1, 1.3)
     ax13.axis("tight")
     ax13.axis("off")
+
+    # fix the layout — pad values prevent label overlap with colorbars
+    try:
+        fig.tight_layout(pad=1.5, h_pad=1.0, w_pad=1.0)
+    except ValueError:
+        # tight_layout can fail with some axes configurations; layout is still usable
+        pass
 
     # display the plots if desired. if this is turned off the plots will still save
     if inputs["display_plots"] == "yes":

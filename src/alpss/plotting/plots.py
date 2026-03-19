@@ -154,6 +154,8 @@ def plot_results(
     #################### plotting the thresholded spectrogram on the ROI to show how the signal start time is found
     if inputs["start_time_user"] == "cusum":
         ax4.plot(sdf_out["time"]*1e9,sdf_out["cusum_s"])
+        ax4.set_title("Cusum Detection")
+        ax4.set_xlabel("Time (ns)")
     else:
         ax4.imshow(
             sdf_out["th3"],
@@ -395,7 +397,7 @@ def plot_results(
         )
 
     # if not np.isnan(sa_out['t_max_comp']) or not np.isnan(sa_out['t_max_ten']) or not np.isnan(sa_out['t_rc']):
-    ax12.legend(loc="upper left", bbox_to_anchor=(1.01, 1), borderaxespad=0, fontsize=6, framealpha=1)
+    ax12.legend(loc="upper left", borderaxespad=0, fontsize=6, framealpha=1)
     ax12.set_xlim(
         [
             -inputs["t_before"] / 1e-9,
@@ -428,7 +430,7 @@ def plot_results(
         "Value": [
             start_time.strftime("%b %d %Y"),
             start_time.strftime("%I:%M %p"),
-            inputs["filepath"],
+            os.path.basename(inputs["filepath"]),
             (end_time - start_time),
             round(iua_out["tau"] * 1e9, 2),
             round(

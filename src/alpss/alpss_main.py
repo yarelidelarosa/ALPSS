@@ -186,6 +186,7 @@ def alpss_main(**inputs):
             logger.info("Running HEL detection...")
             # Convert velocity time from seconds to nanoseconds for HEL
             time_ns = vc_out["time_f"] / 1e-9
+            hel_method = inputs.get("hel_method", "gradient")
             hel_out = hel_detection(
                 time_ns,
                 vc_out["velocity_f_smooth"],
@@ -198,13 +199,18 @@ def alpss_main(**inputs):
                 density=inputs.get("density", None),
                 acoustic_velocity=inputs.get("C0", None),
                 C_L=inputs.get("C_L", None),
+                method=hel_method,
+                hel_rdp_epsilon=inputs.get("hel_rdp_epsilon", 1.25),
+                hel_slope_drop_ratio=inputs.get("hel_slope_drop_ratio", 0.9),
+                hel_min_plateau_duration=inputs.get("hel_min_plateau_duration", 0.5),
             )
             if hel_out.ok:
                 logger.info(
-                    "HEL detected: strength=%.4f GPa, FSV=%.2f m/s, time=%.2f ns",
+                    "HEL detected: strength=%.4f GPa, FSV=%.2f m/s, time=%.2f ns (method=%s)",
                     hel_out.strength_gpa,
                     hel_out.free_surface_velocity,
                     hel_out.time_detection_ns,
+                    hel_out.method,
                 )
             else:
                 if hel_out.error_message:

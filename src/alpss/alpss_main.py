@@ -97,19 +97,22 @@ def alpss_main(**inputs):
             logger.info("Running HEL detection...")
             # Convert velocity time from seconds to nanoseconds for HEL
             time_ns = vc_out["time_f"] / 1e-9
-            hel_method = inputs.get("hel_method", "gradient")
             hel_out = hel_detection(
                 time_ns,
                 vc_out["velocity_f_smooth"],
                 iua_out["vel_uncert"],
-                hel_start_ns=inputs.get("hel_start_time_ns"),
-                hel_end_ns=inputs.get("hel_end_time_ns"),
-                angle_threshold_deg=inputs.get("hel_angle_threshold_deg"),
-                min_points=inputs.get("hel_detection_min_points"),
-                min_velocity=inputs.get("minimum_HEL_velocity_expected"),
+                hel_start_ns=inputs["hel_start_time_ns"],
+                hel_end_ns=inputs["hel_end_time_ns"],
+                angle_threshold_deg=inputs["hel_angle_threshold_deg"],
+                min_points=inputs["hel_detection_min_points"],
+                min_velocity=inputs["minimum_HEL_velocity_expected"],
                 density=inputs.get("density"),
                 acoustic_velocity=inputs.get("C0"),
                 C_L=inputs.get("C_L"),
+                method=inputs["hel_method"],
+                hel_rdp_epsilon=inputs["hel_rdp_epsilon"],
+                hel_slope_drop_ratio=inputs["hel_slope_drop_ratio"],
+                hel_min_plateau_duration=inputs["hel_min_plateau_duration"],
             )
             if hel_out.ok:
                 logger.info(

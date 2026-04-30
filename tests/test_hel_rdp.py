@@ -3,6 +3,36 @@ import numpy as np
 
 from alpss.analysis.hel import hel_detection, hel_detection_rdp_hybrid, HELResult
 
+# Shared minimal kwargs so every call is explicit.
+_RDP_BASE = dict(
+    hel_start_ns=0.0,
+    hel_end_ns=None,
+    min_velocity=10.0,
+    density=None,
+    acoustic_velocity=None,
+    C_L=None,
+    rdp_epsilon=2.0,
+    slope_drop_ratio=0.85,
+    min_plateau_duration_ns=0.5,
+    min_points=3,
+    angle_threshold_deg=45.0,
+)
+
+_HEL_BASE = dict(
+    hel_start_ns=0.0,
+    hel_end_ns=None,
+    angle_threshold_deg=45.0,
+    min_points=3,
+    min_velocity=10.0,
+    density=None,
+    acoustic_velocity=None,
+    C_L=None,
+    method="gradient",
+    hel_rdp_epsilon=2.0,
+    hel_slope_drop_ratio=0.85,
+    hel_min_plateau_duration=0.5,
+)
+
 
 @pytest.fixture
 def synthetic_hel_signal():
@@ -35,13 +65,10 @@ class TestHELRDPHybrid:
         t, v, u = synthetic_hel_signal
         result = hel_detection_rdp_hybrid(
             t, v, u,
-            hel_start_ns=0.0, hel_end_ns=15.0,
-            min_velocity=50.0,
-            density=8960, acoustic_velocity=3950, C_L=4700,
-            rdp_epsilon=2.0,
-            slope_drop_ratio=0.85,
-            min_plateau_duration_ns=0.5,
-            min_points=5,
+            **{**_RDP_BASE, "hel_start_ns": 0.0, "hel_end_ns": 15.0,
+               "min_velocity": 50.0, "density": 8960, "acoustic_velocity": 3950,
+               "C_L": 4700, "rdp_epsilon": 2.0, "slope_drop_ratio": 0.85,
+               "min_plateau_duration_ns": 0.5, "min_points": 5},
         )
         assert result.ok is True
         assert result.method in ("rdp_linear", "gradient_fallback")
@@ -52,31 +79,31 @@ class TestHELRDPHybrid:
         t, v, u = synthetic_hel_signal
         result = hel_detection_rdp_hybrid(
             t, v, u,
-            hel_start_ns=0.0, hel_end_ns=15.0,
-            min_velocity=50.0, C_L=4700,
-            rdp_epsilon=2.0,
+            **{**_RDP_BASE, "hel_start_ns": 0.0, "hel_end_ns": 15.0,
+               "min_velocity": 50.0, "C_L": 4700, "rdp_epsilon": 2.0},
         )
         if result.ok:
             assert result.strain_rate > 0
 
     def test_returns_helresult_always(self, synthetic_hel_signal):
         t, v, u = synthetic_hel_signal
-        result = hel_detection_rdp_hybrid(t, v, u, min_velocity=9999.0)
+        result = hel_detection_rdp_hybrid(t, v, u, **{**_RDP_BASE, "min_velocity": 9999.0})
         assert isinstance(result, HELResult)
 
     def test_fallback_on_flat_signal(self):
         t = np.linspace(0, 20, 200)
         v = np.ones(200) * 100.0
         u = np.ones(200) * 2.0
-        result = hel_detection_rdp_hybrid(t, v, u, min_velocity=50.0)
+        result = hel_detection_rdp_hybrid(t, v, u, **{**_RDP_BASE, "min_velocity": 50.0})
         assert isinstance(result, HELResult)
         assert result.method in ("rdp_linear", "gradient", "gradient_fallback")
 
     def test_rdp_points_stored_when_ok(self, synthetic_hel_signal):
         t, v, u = synthetic_hel_signal
         result = hel_detection_rdp_hybrid(
-            t, v, u, hel_start_ns=0.0, hel_end_ns=15.0,
-            min_velocity=50.0, rdp_epsilon=2.0,
+            t, v, u,
+            **{**_RDP_BASE, "hel_start_ns": 0.0, "hel_end_ns": 15.0,
+               "min_velocity": 50.0, "rdp_epsilon": 2.0},
         )
         if result.ok and result.method == "rdp_linear":
             assert result.rdp_points is not None
@@ -87,10 +114,10 @@ class TestHELRDPHybrid:
         t, v, u = synthetic_hel_signal
         result = hel_detection(
             t, v, u,
-            hel_start_ns=0.0, hel_end_ns=15.0,
-            min_velocity=50.0, method="rdp_linear",
-            density=8960, acoustic_velocity=3950,
-            hel_rdp_epsilon=2.0,
+            **{**_HEL_BASE, "hel_start_ns": 0.0, "hel_end_ns": 15.0,
+               "min_velocity": 50.0, "method": "rdp_linear",
+               "density": 8960, "acoustic_velocity": 3950,
+               "hel_rdp_epsilon": 2.0},
         )
         assert isinstance(result, HELResult)
         assert result.method in ("rdp_linear", "gradient_fallback", "gradient")
@@ -100,9 +127,9 @@ class TestHELRDPHybrid:
         t, v, u = synthetic_hel_signal
         result = hel_detection(
             t, v, u,
-            hel_start_ns=0.0, hel_end_ns=15.0,
-            min_velocity=50.0, method="gradient",
-            density=8960, acoustic_velocity=3950,
+            **{**_HEL_BASE, "hel_start_ns": 0.0, "hel_end_ns": 15.0,
+               "min_velocity": 50.0, "method": "gradient",
+               "density": 8960, "acoustic_velocity": 3950},
         )
         assert isinstance(result, HELResult)
         assert result.method == "gradient"

@@ -139,6 +139,7 @@ def hel_detection(
             slope_drop_ratio=hel_slope_drop_ratio,
             min_plateau_duration_ns=hel_min_plateau_duration,
             min_points=min_points,
+            angle_threshold_deg=angle_threshold_deg,
         )
 
     time_ns = np.asarray(time_ns, dtype=float)
@@ -350,6 +351,7 @@ def hel_detection_rdp_hybrid(
     slope_drop_ratio: float,
     min_plateau_duration_ns: float,
     min_points: int,
+    angle_threshold_deg: float,
 ) -> HELResult:
     """RDP + Linear Hybrid HEL detection (HELIX Toolbox v2 algorithm).
 
@@ -565,10 +567,15 @@ def hel_detection_rdp_hybrid(
         uncertainty,
         hel_start_ns=hel_start_ns,
         hel_end_ns=hel_end_ns,
+        angle_threshold_deg=angle_threshold_deg,
+        min_points=min_points,
         min_velocity=min_velocity,
         density=density,
         acoustic_velocity=acoustic_velocity,
         C_L=C_L,
+        hel_rdp_epsilon=rdp_epsilon,
+        hel_slope_drop_ratio=slope_drop_ratio,
+        hel_min_plateau_duration=min_plateau_duration_ns,
         method="gradient",
     )
     if (

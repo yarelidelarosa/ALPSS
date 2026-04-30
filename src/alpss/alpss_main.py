@@ -91,7 +91,7 @@ def alpss_main(**inputs):
 
     # --- Phase 2c: HEL detection (optional) ---
     hel_out = default_hel_output()
-    hel_enabled = inputs.get("hel_detection_enabled", False)
+    hel_enabled = inputs.get("hel_detection_enabled")
     if hel_enabled:
         try:
             logger.info("Running HEL detection...")
@@ -101,14 +101,14 @@ def alpss_main(**inputs):
                 time_ns,
                 vc_out["velocity_f_smooth"],
                 iua_out["vel_uncert"],
-                hel_start_ns=inputs.get("hel_start_time_ns", 0.0),
-                hel_end_ns=inputs.get("hel_end_time_ns", None),
-                angle_threshold_deg=inputs.get("hel_angle_threshold_deg", 45.0),
-                min_points=inputs.get("hel_detection_min_points", 3),
-                min_velocity=inputs.get("minimum_HEL_velocity_expected", 10.0),
-                density=inputs.get("density", None),
-                acoustic_velocity=inputs.get("C0", None),
-                C_L=inputs.get("C_L", None),
+                hel_start_ns=inputs.get("hel_start_time_ns"),
+                hel_end_ns=inputs.get("hel_end_time_ns"),
+                angle_threshold_deg=inputs.get("hel_angle_threshold_deg"),
+                min_points=inputs.get("hel_detection_min_points"),
+                min_velocity=inputs.get("minimum_HEL_velocity_expected"),
+                density=inputs.get("density"),
+                acoustic_velocity=inputs.get("C0"),
+                C_L=inputs.get("C_L"),
             )
             if hel_out.ok:
                 logger.info(
@@ -154,9 +154,9 @@ def alpss_main(**inputs):
                 time_ns,
                 vc_out["velocity_f_smooth"],
                 hel_out,
-                hel_start_ns=inputs.get("hel_start_time_ns", 0.0),
+                hel_start_ns=inputs.get("hel_start_time_ns"),
                 hel_end_ns=inputs.get("hel_end_time_ns", time_ns[-1]),
-                angle_threshold_deg=inputs.get("hel_angle_threshold_deg", 45.0),
+                angle_threshold_deg=inputs.get("hel_angle_threshold_deg"),
                 sample_name=os.path.basename(inputs.get("filepath", "")),
                 sample_material=inputs.get("material", ""),
             )

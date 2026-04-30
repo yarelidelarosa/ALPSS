@@ -2,6 +2,13 @@ import pytest
 import os
 
 
+def assert_results_match(result_dict, expected, rel=1e-9):
+    for key, val in expected.items():
+        assert key in result_dict, f"Key '{key}' not found in results."
+        assert result_dict[key] == pytest.approx(val, rel=rel), \
+            f"Mismatch for '{key}': expected {val}, got {result_dict[key]}"
+
+
 @pytest.fixture
 def config_file_path():
     """Fixture to provide the path to the test config file."""

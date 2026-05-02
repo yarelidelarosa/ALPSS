@@ -1,6 +1,6 @@
 import numpy as np
 import cv2 as cv
-from alpss.utils.helpers import stft
+from alpss.utils.stft import stft
 import logging
 from scipy import signal
 from scipy.fft import fft, fftfreq

@@ -1,7 +1,7 @@
 import os
 from alpss.plotting.plots import plot_results, plot_voltage
 from alpss.plotting.hel import plot_hel_detection
-from alpss.validation import validate_inputs
+from alpss.utils.validation import validate_inputs
 from alpss.utils.config import flatten_config
 from alpss.analysis.spall import spall_analysis
 from alpss.analysis.full_uncertainty import full_uncertainty_analysis
@@ -34,7 +34,7 @@ def alpss_main(**inputs):
         logger.error("Error in velocity processing: %s", str(e))
         logger.error("Traceback: %s", traceback.format_exc())
         try:
-            from alpss.utils.helpers import extract_data
+            from alpss.io.reading import extract_data
 
             plot_voltage(extract_data(inputs), **inputs)
         except Exception:

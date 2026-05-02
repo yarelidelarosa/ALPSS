@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from alpss.utils.helpers import extract_data
+from alpss.io.reading import extract_data
 from alpss.detection.spall_doi_finder import spall_doi_finder
 from alpss.carrier.frequency import carrier_frequency
 from alpss.carrier.filter import carrier_filter

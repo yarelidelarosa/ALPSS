@@ -31,7 +31,7 @@ def test_flatten_raises_on_unknown_section():
 def test_flatten_raises_on_key_collision():
     with pytest.raises(ValueError, match="collision"):
         _flatten_config({
-            "io": {"density": 1.0},      # density doesn't belong here but shouldn't matter
+            "io": {"density": 1.0},
             "material": {"density": 8960},
         })
 
@@ -54,33 +54,19 @@ def test_flatten_all_valid_sections():
 
 # --- load_json_config ---
 
-def test_load_json_config_nested_dict():
+def test_load_json_config_returns_dict_unchanged():
     d = {"io": {"filepath": "a.csv"}, "material": {"density": 8960}}
-    flat = load_json_config(d)
-    assert flat["filepath"] == "a.csv"
-    assert flat["density"] == 8960
-
-
-def test_load_json_config_flat_dict_raises():
-    with pytest.raises(ValueError, match="nested sections"):
-        load_json_config({"filepath": "a.csv", "density": 8960})
+    result = load_json_config(d)
+    assert result is d
 
 
 def test_load_json_config_from_file(tmp_path):
     config = {"io": {"filepath": "a.csv"}, "material": {"density": 8960}}
     f = tmp_path / "config.json"
     f.write_text(json.dumps(config))
-    flat = load_json_config(str(f))
-    assert flat["filepath"] == "a.csv"
-    assert flat["density"] == 8960
-
-
-def test_load_json_config_flat_file_raises(tmp_path):
-    config = {"filepath": "a.csv", "density": 8960}
-    f = tmp_path / "config.json"
-    f.write_text(json.dumps(config))
-    with pytest.raises(ValueError, match="nested sections"):
-        load_json_config(str(f))
+    result = load_json_config(str(f))
+    assert result["io"]["filepath"] == "a.csv"
+    assert result["material"]["density"] == 8960
 
 
 def test_load_json_config_invalid_path_raises():
@@ -88,9 +74,10 @@ def test_load_json_config_invalid_path_raises():
         load_json_config("/nonexistent/path/config.json")
 
 
-def test_load_json_config_unknown_section_raises(tmp_path):
-    config = {"io": {"filepath": "a.csv"}, "bad_section": {"x": 1}}
+def test_load_json_config_flat_file_loads_without_error(tmp_path):
+    """load_json_config is a loader — validation happens downstream in flatten_config."""
+    config = {"filepath": "a.csv", "density": 8960}
     f = tmp_path / "config.json"
     f.write_text(json.dumps(config))
-    with pytest.raises(ValueError, match="Unknown config sections"):
-        load_json_config(str(f))
+    result = load_json_config(str(f))
+    assert result == config

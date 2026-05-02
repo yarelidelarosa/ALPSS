@@ -29,6 +29,12 @@ def _flatten_config(config: dict) -> dict:
             f"Expected top-level keys from: {sorted(_SECTIONS)}. "
             f"Got: {sorted(config.keys())}"
         )
+    unknown = [k for k in config if k not in _SECTIONS]
+    if unknown:
+        raise ValueError(
+            f"Unknown config sections: {unknown}. "
+            f"Valid sections are: {sorted(_SECTIONS)}"
+        )
     flat = {}
     for section, value in config.items():
         if section in _SECTIONS and isinstance(value, dict):

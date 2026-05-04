@@ -38,25 +38,12 @@ def validate_inputs(inputs):
     if missing:
         raise ValueError(f"Missing required config keys: {missing}")
 
-    if inputs.get("start_time_user") == "otsu":
-        missing = [k for k in _REQUIRED_BY_MODE["start_time_user=otsu"] if k not in inputs]
-        if missing:
-            raise ValueError(f"start_time_user='otsu' requires: {missing}")
-
-    if inputs.get("start_time_user") == "iq":
-        missing = [k for k in _REQUIRED_BY_MODE["start_time_user=iq"] if k not in inputs]
-        if missing:
-            raise ValueError(f"start_time_user='iq' requires: {missing}")
-
-    if inputs.get("start_time_user") == "cusum":
-        missing = [k for k in _REQUIRED_BY_MODE["start_time_user=cusum"] if k not in inputs]
-        if missing:
-            raise ValueError(f"start_time_user='cusum' requires: {missing}")
-
-    if inputs.get("carrier_filter_type") == "sin_fit_subtract":
-        missing = [k for k in _REQUIRED_BY_MODE["carrier_filter_type=sin_fit_subtract"] if k not in inputs]
-        if missing:
-            raise ValueError(f"carrier_filter_type='sin_fit_subtract' requires: {missing}")
+    for mode_key, required_keys in _REQUIRED_BY_MODE.items():
+        param, value = mode_key.split("=")
+        if inputs.get(param) == value:
+            missing = [k for k in required_keys if k not in inputs]
+            if missing:
+                raise ValueError(f"{param}='{value}' requires: {missing}")
 
     if inputs["t_after"] > inputs["time_to_take"]:
         raise ValueError("'t_after' must be less than 'time_to_take'.")

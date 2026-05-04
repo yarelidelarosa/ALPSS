@@ -19,9 +19,8 @@ _ALWAYS_REQUIRED = [
 ]
 
 # Optional keys — not validated but documented here for discoverability.
-# bytestring: raw CSV bytes; alternative to filepath for in-memory data
 # C_L: longitudinal wave speed for HEL strain rate; falls back to C0 if absent
-_OPTIONAL = ["bytestring", "C_L"]
+_OPTIONAL = ["C_L"]
 
 _REQUIRED_BY_MODE = {
     "start_time_user=otsu": ["carrier_band_time"],

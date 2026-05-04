@@ -98,7 +98,6 @@ def valid_inputs():
             "cmap": "viridis",
             "plot_figsize": (80, 40),
             "plot_dpi": 300,
-            "material": "test_material",
         },
     }
 

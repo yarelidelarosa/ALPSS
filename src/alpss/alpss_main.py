@@ -156,7 +156,6 @@ def alpss_main(**inputs):
                 hel_end_ns=inputs.get("hel_end_time_ns"),
                 angle_threshold_deg=inputs.get("hel_angle_threshold_deg"),
                 sample_name=os.path.basename(inputs.get("filepath", "")),
-                sample_material=inputs.get("material", ""),
             )
             if inputs.get("display_plots") != "yes":
                 import matplotlib.pyplot as _plt

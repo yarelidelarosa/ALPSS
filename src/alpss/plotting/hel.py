@@ -12,7 +12,6 @@ def plot_hel_detection(
     hel_end_ns,
     angle_threshold_deg=45.0,
     sample_name="",
-    sample_material="",
     U_0=None,
     t_0=None,
 ):
@@ -35,8 +34,6 @@ def plot_hel_detection(
         Angle threshold used for detection.
     sample_name : str
         Name of the sample/file for the title.
-    sample_material : str
-        Material name for the title.
     U_0 : float or None
         Reference velocity for strain rate slope line.
     t_0 : float or None
@@ -64,7 +61,7 @@ def plot_hel_detection(
     ax1.set_xlabel("Time (ns)", fontsize=12)
     ax1.set_ylabel("Velocity (m/s)", fontsize=12)
     ax1.set_title(
-        f"HEL Detection - {sample_name}\nMaterial: {sample_material}",
+        f"HEL Detection - {sample_name}",
         fontsize=14,
         fontweight="bold",
     )

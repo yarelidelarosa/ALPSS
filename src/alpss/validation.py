@@ -5,12 +5,11 @@ _ALWAYS_REQUIRED = [
     "sample_rate", "nperseg", "noverlap", "nfft", "window",
     "freq_min", "freq_max",
     "blur_kernel", "blur_sigx", "blur_sigy",
-    "carrier_filter_type", "order", "wid",
+    "carrier_filter_type",
     "smoothing_window", "smoothing_wid", "smoothing_amp",
     "smoothing_sigma", "smoothing_mu",
     "lam", "theta",
     "C0", "density", "delta_rho", "delta_C0", "delta_lam", "delta_theta",
-    "pb_neighbors", "pb_idx_correction", "rc_neighbors", "rc_idx_correction",
     "spall_calculation",
     "uncert_mult",
     "cmap", "plot_figsize", "plot_dpi",
@@ -22,8 +21,7 @@ _ALWAYS_REQUIRED = [
 # Optional keys — not validated but documented here for discoverability.
 # bytestring: raw CSV bytes; alternative to filepath for in-memory data
 # C_L: longitudinal wave speed for HEL strain rate; falls back to C0 if absent
-# material: label string used in plot titles
-_OPTIONAL = ["bytestring", "C_L", "material"]
+_OPTIONAL = ["bytestring", "C_L"]
 
 _REQUIRED_BY_MODE = {
     "start_time_user=otsu": ["carrier_band_time"],

@@ -37,10 +37,6 @@ _ALWAYS_REQUIRED = [
     "delta_C0",
     "delta_lam",
     "delta_theta",
-    "pb_neighbors",
-    "pb_idx_correction",
-    "rc_neighbors",
-    "rc_idx_correction",
     "uncert_mult",
     "cmap",
     "plot_figsize",
@@ -49,11 +45,6 @@ _ALWAYS_REQUIRED = [
     "display_plots",
     "spall_calculation",
     "hel_calculation",
-    "hel_start_time_ns",
-    "hel_end_time_ns",
-    "hel_angle_threshold_deg",
-    "hel_detection_min_points",
-    "minimum_HEL_velocity_expected",
 ]
 
 # Optional keys — warning is emitted if absent.
@@ -65,6 +56,8 @@ _REQUIRED_BY_MODE = {
     "start_time_user=cusum": ["cusum_offset", "cusum_threshold"],
     "carrier_filter_type=gaussian_notch": ["order", "wid"],
     "carrier_filter_type=sin_fit_subtract": ["wid", "t_fit_begin", "t_fit_end"],
+    "spall_calculation=True": ["pb_neighbors", "pb_idx_correction", "rc_neighbors", "rc_idx_correction"],
+    "hel_calculation=True": ["hel_start_time_ns", "hel_end_time_ns", "hel_angle_threshold_deg", "hel_detection_min_points", "minimum_HEL_velocity_expected"],
 }
 
 _ALL_KNOWN = (

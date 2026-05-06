@@ -29,7 +29,6 @@ def test_missing_always_required_raises(flat_inputs):
         "out_files_dir",
         "sample_rate",
         "lam",
-        "density",
         "uncert_mult",
     ],
 )
@@ -104,7 +103,7 @@ def test_none_filter_does_not_require_order_wid(flat_inputs):
 # --- _REQUIRED_BY_MODE: spall_calculation ---
 
 
-@pytest.mark.parametrize("missing_key", ["pb_neighbors", "pb_idx_correction", "rc_neighbors", "rc_idx_correction"])
+@pytest.mark.parametrize("missing_key", ["pb_neighbors", "pb_idx_correction", "rc_neighbors", "rc_idx_correction", "C0", "density", "delta_rho", "delta_C0", "delta_lam", "delta_theta"])
 def test_spall_calculation_requires_key(flat_inputs, missing_key):
     inputs = copy.deepcopy(flat_inputs)
     inputs["spall_calculation"] = True
@@ -116,19 +115,27 @@ def test_spall_calculation_requires_key(flat_inputs, missing_key):
 def test_spall_calculation_false_does_not_require_params(flat_inputs):
     inputs = copy.deepcopy(flat_inputs)
     inputs["spall_calculation"] = False
+    inputs["hel_calculation"] = False
     inputs.pop("pb_neighbors", None)
     inputs.pop("pb_idx_correction", None)
     inputs.pop("rc_neighbors", None)
     inputs.pop("rc_idx_correction", None)
+    inputs.pop("C0", None)
+    inputs.pop("density", None)
+    inputs.pop("delta_rho", None)
+    inputs.pop("delta_C0", None)
+    inputs.pop("delta_lam", None)
+    inputs.pop("delta_theta", None)
     validate_inputs(inputs)
 
 
 # --- _REQUIRED_BY_MODE: hel_calculation ---
 
 
-@pytest.mark.parametrize("missing_key", ["hel_start_time_ns", "hel_end_time_ns", "hel_angle_threshold_deg", "hel_detection_min_points", "minimum_HEL_velocity_expected"])
+@pytest.mark.parametrize("missing_key", ["hel_start_time_ns", "hel_end_time_ns", "hel_angle_threshold_deg", "hel_detection_min_points", "minimum_HEL_velocity_expected", "C0", "density"])
 def test_hel_calculation_requires_key(flat_inputs, missing_key):
     inputs = copy.deepcopy(flat_inputs)
+    inputs["spall_calculation"] = False
     inputs["hel_calculation"] = True
     del inputs[missing_key]
     with pytest.raises(ValueError, match="hel_calculation='True'"):
@@ -137,12 +144,23 @@ def test_hel_calculation_requires_key(flat_inputs, missing_key):
 
 def test_hel_calculation_false_does_not_require_params(flat_inputs):
     inputs = copy.deepcopy(flat_inputs)
+    inputs["spall_calculation"] = False
     inputs["hel_calculation"] = False
     inputs.pop("hel_start_time_ns", None)
     inputs.pop("hel_end_time_ns", None)
     inputs.pop("hel_angle_threshold_deg", None)
     inputs.pop("hel_detection_min_points", None)
     inputs.pop("minimum_HEL_velocity_expected", None)
+    inputs.pop("pb_neighbors", None)
+    inputs.pop("pb_idx_correction", None)
+    inputs.pop("rc_neighbors", None)
+    inputs.pop("rc_idx_correction", None)
+    inputs.pop("C0", None)
+    inputs.pop("density", None)
+    inputs.pop("delta_rho", None)
+    inputs.pop("delta_C0", None)
+    inputs.pop("delta_lam", None)
+    inputs.pop("delta_theta", None)
     validate_inputs(inputs)
 
 

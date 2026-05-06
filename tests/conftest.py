@@ -25,8 +25,6 @@ def valid_inputs():
             "time_to_take": 1.5e-06,
             "save_data": "yes",
             "display_plots": "no",
-            "spall_calculation": "yes",
-            "hel_calculation": "yes",
         },
         "stft": {
             "sample_rate": 80000000000.0,
@@ -76,12 +74,14 @@ def valid_inputs():
             "C_L": 4540,
         },
         "spall": {
+            "spall_calculation": "yes",
             "pb_neighbors": 400,
             "pb_idx_correction": 0,
             "rc_neighbors": 400,
             "rc_idx_correction": 0,
         },
         "hel": {
+            "hel_calculation": "yes",
             "hel_start_time_ns": 0.0,
             "hel_end_time_ns": 30.0,
             "hel_angle_threshold_deg": 45.0,

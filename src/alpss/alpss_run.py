@@ -9,8 +9,8 @@ Please report any bugs or comments to jdiamo15@jhu.edu
 Key for input variables:
 filename:                   str; filename for the data to run
 save_data:                  str; 'yes' or 'no' to save output data
-spall_calculation:          str; 'yes' or 'no' to perform spall analysis
-hel_calculation:            str; 'yes' or 'no' to perform HEL detection
+spall_calculation:          bool; True to perform spall analysis, False to skip
+hel_calculation:            bool; True to perform HEL detection, False to skip
 start_time_user:            str or float; if 'none' the program will attempt to find the
                                              signal start time automatically. if float then
                                              the program will use that as the signal start time
@@ -130,14 +130,14 @@ config = {
         "delta_theta": 5,
     },
     "spall": {
-        "spall_calculation": "yes",
+        "spall_calculation": True,
         "pb_neighbors": 400,
         "pb_idx_correction": 0,
         "rc_neighbors": 400,
         "rc_idx_correction": 0,
     },
     "hel": {
-        "hel_calculation": "yes",
+        "hel_calculation": True,
         "hel_start_time_ns": 0.0,
         "hel_end_time_ns": 30.0,
         "hel_angle_threshold_deg": 45.0,

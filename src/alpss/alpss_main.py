@@ -53,8 +53,7 @@ def alpss_main(**inputs):
     errors = []
     sa_out = default_spall_output()
     spall_ok = False
-    spall_enabled = inputs.get("spall_calculation")
-    if spall_enabled:
+    if inputs["spall_calculation"]:
         try:
             logger.info("Running spall analysis...")
             sa_out = spall_analysis(vc_out, iua_out, **inputs)
@@ -94,8 +93,7 @@ def alpss_main(**inputs):
 
     # --- Phase 2c: HEL detection (optional) ---
     hel_out = default_hel_output()
-    hel_enabled = inputs.get("hel_calculation")
-    if hel_enabled:
+    if inputs["hel_calculation"]:
         try:
             logger.info("Running HEL detection...")
             # Convert velocity time from seconds to nanoseconds for HEL

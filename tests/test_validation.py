@@ -132,7 +132,7 @@ def test_spall_calculation_false_does_not_require_params(flat_inputs):
 # --- _REQUIRED_BY_MODE: hel_calculation ---
 
 
-@pytest.mark.parametrize("missing_key", ["hel_start_time_ns", "hel_end_time_ns", "hel_angle_threshold_deg", "hel_detection_min_points", "minimum_HEL_velocity_expected", "C0", "density"])
+@pytest.mark.parametrize("missing_key", ["hel_start_time_ns", "hel_end_time_ns", "hel_angle_threshold_deg", "hel_detection_min_points", "minimum_HEL_velocity_expected", "C_L", "density"])
 def test_hel_calculation_requires_key(flat_inputs, missing_key):
     inputs = copy.deepcopy(flat_inputs)
     inputs["spall_calculation"] = False

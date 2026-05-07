@@ -48,6 +48,7 @@
     },
     "material": {
         "C0": 4540,
+        "C_L": 4540,
         "density": 1730,
         "delta_rho": 9,
         "delta_C0": 23,

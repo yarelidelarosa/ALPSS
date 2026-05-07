@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from alpss.analysis.hel import hel_detection, elastic_shock_strain_rate, HELResult
+from alpss.analysis.hel import hel_detection, elastic_shock_strain_rate
 
 
 class TestElasticShockStrainRate:
@@ -60,7 +60,9 @@ class TestHELDetection:
     def test_detects_hel_in_synthetic_signal(self, synthetic_hel_signal):
         t, v, u = synthetic_hel_signal
         result = hel_detection(
-            t, v, u,
+            t,
+            v,
+            u,
             hel_start_ns=3.0,
             hel_end_ns=10.0,
             angle_threshold_deg=45.0,
@@ -78,7 +80,9 @@ class TestHELDetection:
     def test_returns_not_ok_below_min_velocity(self, synthetic_hel_signal):
         t, v, u = synthetic_hel_signal
         result = hel_detection(
-            t, v, u,
+            t,
+            v,
+            u,
             hel_start_ns=3.0,
             hel_end_ns=10.0,
             min_velocity=500.0,  # above the plateau velocity
@@ -88,7 +92,9 @@ class TestHELDetection:
     def test_returns_not_ok_for_empty_data(self):
         with pytest.raises(ValueError, match="insufficient valid data points for HEL"):
             hel_detection(
-                np.array([]), np.array([]), np.array([]),
+                np.array([]),
+                np.array([]),
+                np.array([]),
             )
 
     def test_returns_not_ok_for_all_nan(self):
@@ -104,7 +110,9 @@ class TestHELDetection:
         density = 8960
         acoustic_velocity = 3940
         result = hel_detection(
-            t, v, u,
+            t,
+            v,
+            u,
             hel_start_ns=3.0,
             hel_end_ns=10.0,
             min_points=5,
@@ -112,7 +120,9 @@ class TestHELDetection:
             density=density,
             acoustic_velocity=acoustic_velocity,
         )
-        expected_gpa = 0.5 * density * acoustic_velocity * abs(result.free_surface_velocity) / 1e9
+        expected_gpa = (
+            0.5 * density * acoustic_velocity * abs(result.free_surface_velocity) / 1e9
+        )
         assert result.strength_gpa == pytest.approx(expected_gpa, rel=1e-6)
 
     def test_strain_rate_computed_when_C_L_provided(self, synthetic_hel_signal):
@@ -120,7 +130,9 @@ class TestHELDetection:
         # Use a wider window so the plateau doesn't start at index 0,
         # which allows a reference point before the segment for strain rate
         result = hel_detection(
-            t, v, u,
+            t,
+            v,
+            u,
             hel_start_ns=-2.0,
             hel_end_ns=10.0,
             min_points=5,
@@ -136,7 +148,9 @@ class TestHELDetection:
         """HEL detection works but stress is NaN without material properties."""
         t, v, u = synthetic_hel_signal
         result = hel_detection(
-            t, v, u,
+            t,
+            v,
+            u,
             hel_start_ns=3.0,
             hel_end_ns=10.0,
             min_points=5,
@@ -149,7 +163,9 @@ class TestHELDetection:
     def test_result_has_plotting_data(self, synthetic_hel_signal):
         t, v, u = synthetic_hel_signal
         result = hel_detection(
-            t, v, u,
+            t,
+            v,
+            u,
             hel_start_ns=3.0,
             hel_end_ns=10.0,
             min_points=5,

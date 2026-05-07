@@ -2,11 +2,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import pandas as pd
 import os
-from alpss.utils.helpers import stft
+from alpss.utils.stft import stft
 import numpy as np
-import random
-import string
-from importlib.metadata import version, PackageNotFoundError
 
 
 # function to generate the final figure

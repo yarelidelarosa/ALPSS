@@ -1,22 +1,15 @@
-import os
-from alpss.plotting.plots import plot_results, plot_voltage
-from alpss.plotting.hel import plot_hel_detection
-from alpss.validation import validate_inputs
+from alpss.plotting.plots import plot_voltage
+from alpss.utils.validation import validate_inputs
 from alpss.utils.config import flatten_config
-from alpss.analysis.spall import spall_analysis
-from alpss.analysis.full_uncertainty import full_uncertainty_analysis
-from alpss.analysis.hel import hel_detection
-from alpss.io.saving import save
-from alpss.utils.phases import run_velocity_phase
-from alpss.utils.defaults import (
-    default_spall_output,
-    default_uncertainty_output,
-    default_hel_output,
+from alpss.utils.phases import (
+    run_velocity_phase,
+    run_spall_phase,
+    run_uncertainty_phase,
+    run_hel_phase,
+    run_output_phase,
 )
 from alpss.utils.logging import setup_alpss_logger
 from datetime import datetime
-import traceback
-import numpy as np
 
 
 logger = setup_alpss_logger()
@@ -32,9 +25,8 @@ def alpss_main(**inputs):
         vel = run_velocity_phase(**inputs)
     except Exception as e:
         logger.error("Error in velocity processing: %s", str(e))
-        logger.error("Traceback: %s", traceback.format_exc())
         try:
-            from alpss.utils.helpers import extract_data
+            from alpss.io.reading import extract_data
 
             plot_voltage(extract_data(inputs), **inputs)
         except Exception:
@@ -51,89 +43,27 @@ def alpss_main(**inputs):
 
     # --- Phase 2a: Spall analysis (optional) ---
     errors = []
-    sa_out = default_spall_output()
-    spall_ok = False
-    if inputs["spall_calculation"]:
-        try:
-            logger.info("Running spall analysis...")
-            sa_out = spall_analysis(vc_out, iua_out, **inputs)
-            spall_ok = True
-            logger.info(
-                "Spall analysis complete: spall strength=%.4f, strain rate=%.4e",
-                sa_out["spall_strength_est"],
-                sa_out["strain_rate_est"],
-            )
-        except Exception as e:
-            errors.append(f"spall: {e}")
-            logger.error("Error in spall analysis: %s", str(e))
-            logger.error("Traceback: %s", traceback.format_exc())
-            logger.info("Continuing without spall analysis.")
+    sa_out, spall_ok, spall_error = run_spall_phase(vc_out, iua_out, **inputs)
+    if spall_error:
+        errors.append(spall_error)
 
     # --- Phase 2b: Full uncertainty analysis ---
-    fua_out = default_uncertainty_output()
-    uncertainty_ok = False
-    if not spall_ok:
-        logger.info("Skipping uncertainty analysis: spall analysis did not succeed.")
-        errors.append(f"uncertainty: analysis skipped due to spall_ok=false")
-    else:
-        try:
-            logger.info("Running full uncertainty analysis...")
-            fua_out = full_uncertainty_analysis(cen, sa_out, iua_out, **inputs)
-            uncertainty_ok = True
-            logger.info(
-                "Uncertainty analysis complete: spall uncertainty=%.4f, strain rate uncertainty=%.4e",
-                fua_out["spall_uncert"],
-                fua_out["strain_rate_uncert"],
-            )
-        except Exception as e:
-            errors.append(f"uncertainty: {e}")
-            logger.error("Error in uncertainty analysis: %s", str(e))
-            logger.error("Traceback: %s", traceback.format_exc())
-            logger.info("Continuing without uncertainty analysis.")
+    fua_out, uncertainty_ok, uncertainty_error = run_uncertainty_phase(
+        cen, sa_out, iua_out, spall_ok, **inputs
+    )
+    if uncertainty_error:
+        errors.append(uncertainty_error)
 
     # --- Phase 2c: HEL detection (optional) ---
-    hel_out = default_hel_output()
-    if inputs["hel_calculation"]:
-        try:
-            logger.info("Running HEL detection...")
-            # Convert velocity time from seconds to nanoseconds for HEL
-            time_ns = vc_out["time_f"] / 1e-9
-            hel_out = hel_detection(
-                time_ns,
-                vc_out["velocity_f_smooth"],
-                iua_out["vel_uncert"],
-                hel_start_ns=inputs.get("hel_start_time_ns"),
-                hel_end_ns=inputs.get("hel_end_time_ns"),
-                angle_threshold_deg=inputs.get("hel_angle_threshold_deg"),
-                min_points=inputs.get("hel_detection_min_points"),
-                min_velocity=inputs.get("minimum_HEL_velocity_expected"),
-                density=inputs.get("density"),
-                acoustic_velocity=inputs.get("C0"),
-                C_L=inputs.get("C_L"),
-            )
-            if hel_out.ok:
-                logger.info(
-                    "HEL detected: strength=%.4f GPa, FSV=%.2f m/s, time=%.2f ns",
-                    hel_out.strength_gpa,
-                    hel_out.free_surface_velocity,
-                    hel_out.time_detection_ns,
-                )
-            else:
-                if hel_out.error_message:
-                    errors.append(f"hel: {hel_out.error_message}")
-                logger.info("HEL detection complete: no HEL found")
-        except Exception as e:
-            errors.append(f"hel: {e}")
-            logger.error("Error in HEL detection: %s", str(e))
-            logger.error("Traceback: %s", traceback.format_exc())
-            logger.info("Continuing without HEL results.")
+    hel_out, hel_error = run_hel_phase(vc_out, iua_out, **inputs)
+    if hel_error:
+        errors.append(hel_error)
 
     # --- Phase 3: Output (plotting + saving) ---
     end_time_final = datetime.now()
+    logger.info(f"\nFull runtime: {end_time_final - start_time}\n")
 
-    # function to generate the final figure
-    logger.info("Generating plots...")
-    fig = plot_results(
+    fig, hel_fig, items = run_output_phase(
         sdf_out,
         cen,
         cf_out,
@@ -141,56 +71,13 @@ def alpss_main(**inputs):
         sa_out,
         iua_out,
         fua_out,
+        hel_out,
         start_time,
         end_time,
+        spall_ok,
+        uncertainty_ok,
+        errors,
         **inputs,
     )
-
-    # Generate HEL diagnostic plot as a separate figure
-    hel_fig = None
-    if hel_out.ok:
-        try:
-            time_ns = vc_out["time_f"] / 1e-9
-            hel_fig = plot_hel_detection(
-                time_ns,
-                vc_out["velocity_f_smooth"],
-                hel_out,
-                hel_start_ns=inputs["hel_start_time_ns"],
-                hel_end_ns=inputs["hel_end_time_ns"],
-                angle_threshold_deg=inputs["hel_angle_threshold_deg"],
-            )
-            if not inputs["display_plots"]:
-                import matplotlib.pyplot as _plt
-
-                _plt.close(hel_fig)
-        except Exception as e:
-            logger.error("Error generating HEL plot: %s", str(e))
-
-    logger.info(f"\nFull runtime: {end_time_final - start_time}\n")
-
-    logger.info("Plots generated")
-
-    # function to save the output files if desired
-    logger.info("Saving outputs...")
-    items = save(
-        sdf_out,
-        cen,
-        vc_out,
-        sa_out,
-        iua_out,
-        fua_out,
-        start_time,
-        end_time,
-        fig,
-        iq_fig=sdf_out.get("iq_fig"),
-        hel_fig=hel_fig,
-        hel_out=hel_out,
-        spall_ok=spall_ok,
-        uncertainty_ok=uncertainty_ok,
-        error_msg="; ".join(errors) if errors else "",
-        **inputs,
-    )
-
-    logger.info("Outputs saved")
 
     return (fig, items)

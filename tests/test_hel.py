@@ -69,7 +69,7 @@ class TestHELDetection:
             min_points=5,
             min_velocity=50.0,
             density=8960,
-            acoustic_velocity=3940,
+            C_L=3940,
         )
         assert result.ok is True
         assert result.strength_gpa > 0
@@ -105,10 +105,10 @@ class TestHELDetection:
             hel_detection(t, v, u)
 
     def test_hel_stress_calculation(self, synthetic_hel_signal):
-        """Verify HEL stress = 0.5 * density * acoustic_velocity * fsv / 1e9."""
+        """Verify HEL stress = 0.5 * density * C_L * fsv / 1e9."""
         t, v, u = synthetic_hel_signal
         density = 8960
-        acoustic_velocity = 3940
+        C_L = 3940
         result = hel_detection(
             t,
             v,
@@ -118,10 +118,10 @@ class TestHELDetection:
             min_points=5,
             min_velocity=50.0,
             density=density,
-            acoustic_velocity=acoustic_velocity,
+            C_L=C_L,
         )
         expected_gpa = (
-            0.5 * density * acoustic_velocity * abs(result.free_surface_velocity) / 1e9
+            0.5 * density * C_L * abs(result.free_surface_velocity) / 1e9
         )
         assert result.strength_gpa == pytest.approx(expected_gpa, rel=1e-6)
 
@@ -138,7 +138,6 @@ class TestHELDetection:
             min_points=5,
             min_velocity=50.0,
             density=8960,
-            acoustic_velocity=3940,
             C_L=5000,
         )
         assert result.ok is True

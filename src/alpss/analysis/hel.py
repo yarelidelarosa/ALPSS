@@ -69,7 +69,6 @@ def hel_detection(
     min_points=3,
     min_velocity=10.0,
     density=None,
-    acoustic_velocity=None,
     C_L=None,
 ):
     """
@@ -100,11 +99,8 @@ def hel_detection(
         Minimum HEL velocity (m/s) to accept the detection. Default 10.0.
     density : float or None
         Material density in kg/m³. Required for HEL stress calculation.
-    acoustic_velocity : float or None
-        Bulk wave speed in m/s. Required for HEL stress calculation.
     C_L : float or None
-        Longitudinal wave velocity in m/s. Used for strain rate.
-        Falls back to acoustic_velocity if not provided.
+        Longitudinal wave velocity in m/s. Required for HEL stress and strain rate calculations.
 
     Returns
     -------
@@ -227,14 +223,12 @@ def hel_detection(
     # Compute HEL stress if material properties are provided
     strength_gpa = np.nan
     uncertainty_gpa = np.nan
-    if density is not None and acoustic_velocity is not None:
-        strength_gpa = 0.5 * density * acoustic_velocity * abs(fsv) / 1e9
-        uncertainty_gpa = 0.5 * density * acoustic_velocity * u_unc / 1e9
+    if density is not None and C_L is not None:
+        strength_gpa = 0.5 * density * C_L * abs(fsv) / 1e9
+        uncertainty_gpa = 0.5 * density * C_L * u_unc / 1e9
 
     # Compute strain rate if C_L is available
     strain_rate = np.nan
-    if C_L is None:
-        C_L = acoustic_velocity
     if C_L is not None:
         # Use the point just before the segment as reference, or the first
         # window point if the segment starts at index 0

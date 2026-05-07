@@ -137,7 +137,6 @@ def run_hel_phase(vc_out, iua_out, **inputs) -> tuple:
                 min_points=inputs.get("hel_detection_min_points"),
                 min_velocity=inputs.get("minimum_HEL_velocity_expected"),
                 density=inputs.get("density"),
-                acoustic_velocity=inputs.get("C0"),
                 C_L=inputs.get("C_L"),
             )
             if hel_out.ok:

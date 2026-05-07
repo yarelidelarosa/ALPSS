@@ -13,7 +13,8 @@ from alpss.analysis.instantaneous_uncertainty import instantaneous_uncertainty_a
 from alpss.analysis.spall import spall_analysis
 from alpss.analysis.full_uncertainty import full_uncertainty_analysis
 from alpss.analysis.hel import hel_detection
-from alpss.plotting.plots import plot_results, plot_hel_detection
+from alpss.plotting.plots import plot_results
+from alpss.plotting.hel import plot_hel_detection
 from alpss.utils.defaults import (
     default_spall_output,
     default_uncertainty_output,
@@ -160,7 +161,20 @@ def run_hel_phase(vc_out, iua_out, **inputs) -> tuple:
 
 
 def run_output_phase(
-    sdf_out, cen, cf_out, vc_out, sa_out, iua_out, fua_out, hel_out, start_time, end_time, spall_ok, uncertainty_ok, errors, **inputs
+    sdf_out,
+    cen,
+    cf_out,
+    vc_out,
+    sa_out,
+    iua_out,
+    fua_out,
+    hel_out,
+    start_time,
+    end_time,
+    spall_ok,
+    uncertainty_ok,
+    errors,
+    **inputs,
 ) -> tuple:
     """Phase 3: Output (plotting + saving). Returns (fig, hel_fig, items)."""
     # Generate plots

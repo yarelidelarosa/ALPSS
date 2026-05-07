@@ -1,60 +1,80 @@
 {
-    "filepath": "tests/input_data/example_file.csv",
-    "out_files_dir": "tests/output_data/",
-    "start_time_user": "otsu",
-    "carrier_filter_type": "gaussian_notch",
-    "save_data": "yes",
-    "display_plots": "no",
-    "spall_calculation": "yes",
-    "window": "hann",
-    "cmap": "viridis",
-    "header_lines": 1,
-    "time_to_skip": 2.3e-06,
-    "time_to_take": 1.5e-06,
-    "t_before": 5.0e-09,
-    "t_after": 5.0e-08,
-    "start_time_correction": 0.0,
-    "freq_min": 1500000000.0,
-    "freq_max": 4000000000.0,
-    "smoothing_window": 601,
-    "smoothing_wid": 3,
-    "smoothing_amp": 1,
-    "smoothing_sigma": 1,
-    "smoothing_mu": 0,
-    "pb_neighbors": 400,
-    "pb_idx_correction": 0,
-    "rc_neighbors": 400,
-    "rc_idx_correction": 0,
-    "sample_rate": 80000000000,
-    "nperseg": 512,
-    "noverlap": 435,
-    "nfft": 5120,
-    "blur_kernel": [
-        5,
-        5
-    ],
-    "blur_sigx": 0,
-    "blur_sigy": 0,
-    "carrier_band_time": 2.5e-07,
-    "uncert_mult": 100,
-    "order": 6,
-    "wid": 50000000.0,
-    "lam": 1.547461e-06,
-    "C0": 4540,
-    "density": 1730,
-    "delta_rho": 9,
-    "delta_C0": 23,
-    "delta_lam": 8.0e-18,
-    "theta": 0,
-    "delta_theta": 5,
-    "plot_figsize": [
-        80,
-        40
-    ],
-    "plot_dpi": 300,
-    "iq_threshold_factor": 0.4,
-    "cusum_offset": 5,
-    "cusum_threshold": 1000,
-    "t_fit_begin": 20,
-    "t_fit_end": 300
+    "io": {
+        "filepath": "tests/input_data/example_file.csv",
+        "out_files_dir": "tests/output_data/",
+        "header_lines": 1,
+        "time_to_skip": 2.3e-06,
+        "time_to_take": 1.5e-06,
+        "save_data": true,
+        "display_plots": false
+    },
+    "stft": {
+        "sample_rate": 80000000000,
+        "nperseg": 512,
+        "noverlap": 435,
+        "nfft": 5120,
+        "window": "hann",
+        "freq_min": 1500000000.0,
+        "freq_max": 4000000000.0,
+        "blur_kernel": [5, 5],
+        "blur_sigx": 0,
+        "blur_sigy": 0
+    },
+    "start_time": {
+        "start_time_user": "otsu",
+        "start_time_correction": 0.0,
+        "t_before": 5.0e-09,
+        "t_after": 5.0e-08,
+        "iq_threshold_factor": 0.4,
+        "cusum_offset": 5,
+        "cusum_threshold": 1000,
+        "carrier_band_time": 2.5e-07
+    },
+    "carrier": {
+        "carrier_filter_type": "gaussian_notch",
+        "order": 6,
+        "wid": 50000000.0,
+        "t_fit_begin": 20,
+        "t_fit_end": 300
+    },
+    "velocity": {
+        "smoothing_window": 601,
+        "smoothing_wid": 3,
+        "smoothing_amp": 1,
+        "smoothing_sigma": 1,
+        "smoothing_mu": 0,
+        "lam": 1.547461e-06,
+        "theta": 0
+    },
+    "material": {
+        "C0": 4540,
+        "density": 1730,
+        "delta_rho": 9,
+        "delta_C0": 23,
+        "delta_lam": 8.0e-18,
+        "delta_theta": 5
+    },
+    "spall": {
+        "spall_calculation": true,
+        "pb_neighbors": 400,
+        "pb_idx_correction": 0,
+        "rc_neighbors": 400,
+        "rc_idx_correction": 0
+    },
+    "hel": {
+        "hel_calculation": true,
+        "hel_start_time_ns": 0.0,
+        "hel_end_time_ns": 30.0,
+        "hel_angle_threshold_deg": 45.0,
+        "hel_detection_min_points": 3,
+        "minimum_HEL_velocity_expected": 10.0
+    },
+    "uncertainty": {
+        "uncert_mult": 100
+    },
+    "plotting": {
+        "cmap": "viridis",
+        "plot_figsize": [80, 40],
+        "plot_dpi": 300
+    }
 }

@@ -7,9 +7,9 @@ from alpss.alpss_main import alpss_main
 
 
 def test_velocity_only_no_spall(valid_inputs):
-    """Test that velocity processing succeeds with spall_calculation='no'."""
+    """Test that velocity processing succeeds with spall_calculation=False."""
     inputs = copy.deepcopy(valid_inputs)
-    inputs["spall_calculation"] = "no"
+    inputs["spall"]["spall_calculation"] = False
 
     results = alpss_main(**inputs)
     assert (

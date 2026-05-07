@@ -2,6 +2,7 @@ import os
 from alpss.plotting.plots import plot_results, plot_voltage
 from alpss.plotting.hel import plot_hel_detection
 from alpss.validation import validate_inputs
+from alpss.utils.config import flatten_config
 from alpss.analysis.spall import spall_analysis
 from alpss.analysis.full_uncertainty import full_uncertainty_analysis
 from alpss.analysis.hel import hel_detection
@@ -23,7 +24,7 @@ logger = setup_alpss_logger()
 
 # main function to link together all the sub-functions
 def alpss_main(**inputs):
-    # validate the inputs for the run
+    inputs = flatten_config(inputs)
     validate_inputs(inputs)
 
     # --- Phase 1: Velocity Processing ---
@@ -48,24 +49,25 @@ def alpss_main(**inputs):
     start_time = vel["start_time"]
     end_time = vel["end_time"]
 
-    # --- Phase 2a: Spall analysis ---
+    # --- Phase 2a: Spall analysis (optional) ---
     errors = []
     sa_out = default_spall_output()
     spall_ok = False
-    try:
-        logger.info("Running spall analysis...")
-        sa_out = spall_analysis(vc_out, iua_out, **inputs)
-        spall_ok = True
-        logger.info(
-            "Spall analysis complete: spall strength=%.4f, strain rate=%.4e",
-            sa_out["spall_strength_est"],
-            sa_out["strain_rate_est"],
-        )
-    except Exception as e:
-        errors.append(f"spall: {e}")
-        logger.error("Error in spall analysis: %s", str(e))
-        logger.error("Traceback: %s", traceback.format_exc())
-        logger.info("Continuing without spall analysis.")
+    if inputs["spall_calculation"]:
+        try:
+            logger.info("Running spall analysis...")
+            sa_out = spall_analysis(vc_out, iua_out, **inputs)
+            spall_ok = True
+            logger.info(
+                "Spall analysis complete: spall strength=%.4f, strain rate=%.4e",
+                sa_out["spall_strength_est"],
+                sa_out["strain_rate_est"],
+            )
+        except Exception as e:
+            errors.append(f"spall: {e}")
+            logger.error("Error in spall analysis: %s", str(e))
+            logger.error("Traceback: %s", traceback.format_exc())
+            logger.info("Continuing without spall analysis.")
 
     # --- Phase 2b: Full uncertainty analysis ---
     fua_out = default_uncertainty_output()
@@ -91,8 +93,7 @@ def alpss_main(**inputs):
 
     # --- Phase 2c: HEL detection (optional) ---
     hel_out = default_hel_output()
-    hel_enabled = inputs.get("hel_detection_enabled")
-    if hel_enabled:
+    if inputs["hel_calculation"]:
         try:
             logger.info("Running HEL detection...")
             # Convert velocity time from seconds to nanoseconds for HEL
@@ -147,20 +148,18 @@ def alpss_main(**inputs):
 
     # Generate HEL diagnostic plot as a separate figure
     hel_fig = None
-    if hel_enabled and hel_out.ok:
+    if hel_out.ok:
         try:
             time_ns = vc_out["time_f"] / 1e-9
             hel_fig = plot_hel_detection(
                 time_ns,
                 vc_out["velocity_f_smooth"],
                 hel_out,
-                hel_start_ns=inputs.get("hel_start_time_ns"),
-                hel_end_ns=inputs.get("hel_end_time_ns"),
-                angle_threshold_deg=inputs.get("hel_angle_threshold_deg"),
-                sample_name=os.path.basename(inputs.get("filepath", "")),
-                sample_material=inputs.get("material", ""),
+                hel_start_ns=inputs["hel_start_time_ns"],
+                hel_end_ns=inputs["hel_end_time_ns"],
+                angle_threshold_deg=inputs["hel_angle_threshold_deg"],
             )
-            if inputs.get("display_plots") != "yes":
+            if not inputs["display_plots"]:
                 import matplotlib.pyplot as _plt
 
                 _plt.close(hel_fig)
@@ -185,7 +184,7 @@ def alpss_main(**inputs):
         fig,
         iq_fig=sdf_out.get("iq_fig"),
         hel_fig=hel_fig,
-        hel_out=hel_out if hel_enabled else None,
+        hel_out=hel_out,
         spall_ok=spall_ok,
         uncertainty_ok=uncertainty_ok,
         error_msg="; ".join(errors) if errors else "",

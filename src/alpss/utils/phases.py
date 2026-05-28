@@ -252,6 +252,7 @@ def run_output_phase(
         iq_fig=sdf_out.get("iq_fig"),
         hel_fig=hel_fig,
         hel_out=hel_out,
+        velocity_ok=True,
         spall_ok=spall_ok,
         uncertainty_ok=uncertainty_ok,
         error_msg="; ".join(errors) if errors else "",

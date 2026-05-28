@@ -386,7 +386,7 @@ def plot_results(
             (end_time - start_time),
             round(iua_out["tau"] * 1e9, 2),
             round(
-                (0.5 * inputs["density"] * inputs["C0"] * sa_out["v_max_comp"]) / 1e9, 6
+                (0.5 * inputs["density"] * inputs["C0"] * vc_out["v_max_comp"]) / 1e9, 6
             ),
             rf"{round(sa_out['strain_rate_est'] / 1e6, 6)} $\pm$ {round(fua_out['strain_rate_uncert'] / 1e6, 6)}",
             rf"{round(sa_out['spall_strength_est'] / 1e9, 6)} $\pm$ {round(fua_out['spall_uncert'] / 1e9, 6)}",

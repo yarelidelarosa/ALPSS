@@ -14,11 +14,14 @@ def spall_analysis(vc_out, iua_out, **inputs):
     rc_idx_correction = inputs["rc_idx_correction"]
     C0 = inputs["C0"]
     density = inputs["density"]
+    freq_uncert = iua_out["freq_uncert"]
+    vel_uncert = iua_out["vel_uncert"]
 
-    # read the global peak velocity and its uncertainties (now computed in velocity_calculation)
+    # read the global peak velocity (now computed in velocity_calculation)
     peak_velocity = vc_out["v_max_comp"]
-    peak_velocity_freq_uncert = iua_out["peak_velocity_freq_uncert"]
-    peak_velocity_vel_uncert = iua_out["peak_velocity_vel_uncert"]
+    # compute the uncertainties associated with the peak velocity
+    peak_velocity_freq_uncert = freq_uncert[peak_velocity_idx]
+    peak_velocity_vel_uncert = vel_uncert[peak_velocity_idx]
 
     # attempt to get the fist local minimum after the peak velocity to get the pullback
     # velocity. 'order' is the number of points on each side to compare to.
@@ -75,6 +78,8 @@ def spall_analysis(vc_out, iua_out, **inputs):
         "v_rc": v_rc,
         "spall_strength_est": spall_strength_est,
         "strain_rate_est": strain_rate_est,
+        "peak_velocity_freq_uncert": peak_velocity_freq_uncert,
+        "peak_velocity_vel_uncert": peak_velocity_vel_uncert,
         "max_ten_freq_uncert": max_ten_freq_uncert,
         "max_ten_vel_uncert": max_ten_vel_uncert,
     }

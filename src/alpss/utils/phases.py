@@ -72,7 +72,7 @@ def run_spall_phase(vc_out, iua_out, **inputs) -> tuple:
     spall_ok = False
     error_msg = None
 
-    if inputs["spall_calculation"]:
+    if inputs["spall_enabled"]:
         try:
             logger.info("Running spall analysis...")
             sa_out = spall_analysis(vc_out, iua_out, **inputs)
@@ -124,7 +124,7 @@ def run_hel_phase(vc_out, iua_out, **inputs) -> tuple:
     hel_out = default_hel_output()
     error_msg = None
 
-    if inputs["hel_calculation"]:
+    if inputs["hel_enabled"]:
         try:
             logger.info("Running HEL detection...")
             # Convert velocity time from seconds to nanoseconds for HEL

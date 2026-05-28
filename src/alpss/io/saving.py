@@ -133,6 +133,7 @@ def save(
 
     # Spall phase
     results_to_save.update({
+        "Spall Enabled": inputs["spall_enabled"],
         "Spall OK": spall_ok,
         "Velocity at Max Tension": sa_out["v_max_ten"],
         "Time at Max Tension": sa_out["t_max_ten"],
@@ -154,7 +155,8 @@ def save(
     # HEL phase
     if hel_out is not None:
         results_to_save.update({
-            "HEL Detected": hel_out.ok,
+            "HEL Enabled": inputs["hel_enabled"],
+            "HEL OK": hel_out.ok,
             "HEL Strength (GPa)": hel_out.strength_gpa,
             "HEL Uncertainty (GPa)": hel_out.uncertainty_gpa,
             "HEL Free Surface Velocity (m/s)": hel_out.free_surface_velocity,

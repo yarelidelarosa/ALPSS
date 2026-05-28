@@ -136,6 +136,8 @@ def save(
         "Spall OK": spall_ok,
         "Velocity at Max Tension": sa_out["v_max_ten"],
         "Time at Max Tension": sa_out["t_max_ten"],
+        "Velocity at Max Tension Freq Uncertainty": sa_out["max_ten_freq_uncert"],
+        "Velocity at Max Tension Vel Uncertainty": sa_out["max_ten_vel_uncert"],
         "Velocity at Recompression": sa_out["v_rc"],
         "Time at Recompression": sa_out["t_rc"],
         "Spall Strength": sa_out["spall_strength_est"],

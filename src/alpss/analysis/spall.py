@@ -7,7 +7,6 @@ def spall_analysis(vc_out, iua_out, **inputs):
     # unpack dictionary values in to individual variables
     time_f = vc_out["time_f"]
     velocity_f_smooth = vc_out["velocity_f_smooth"]
-    peak_velocity_idx = vc_out["peak_velocity_idx"]
     pb_neighbors = inputs["pb_neighbors"]
     pb_idx_correction = inputs["pb_idx_correction"]
     rc_neighbors = inputs["rc_neighbors"]
@@ -17,11 +16,9 @@ def spall_analysis(vc_out, iua_out, **inputs):
     freq_uncert = iua_out["freq_uncert"]
     vel_uncert = iua_out["vel_uncert"]
 
-    # read the global peak velocity (now computed in velocity_calculation)
-    peak_velocity = vc_out["v_max_comp"]
     # compute the uncertainties associated with the peak velocity
-    peak_velocity_freq_uncert = freq_uncert[peak_velocity_idx]
-    peak_velocity_vel_uncert = vel_uncert[peak_velocity_idx]
+    peak_velocity_freq_uncert = freq_uncert[vc_out["peak_velocity_idx"]]
+    peak_velocity_vel_uncert = vel_uncert[vc_out["peak_velocity_idx"]]
 
     # attempt to get the fist local minimum after the peak velocity to get the pullback
     # velocity. 'order' is the number of points on each side to compare to.
@@ -43,7 +40,7 @@ def spall_analysis(vc_out, iua_out, **inputs):
     max_tension_velocity = velocity_f_smooth[max_ten_idx]
 
     # calculate the pullback velocity
-    pullback_velocity = peak_velocity - max_tension_velocity
+    pullback_velocity = vc_out["v_max_comp"] - max_tension_velocity
 
     # calculate the estimated strain rate and spall strength
     strain_rate_est = (

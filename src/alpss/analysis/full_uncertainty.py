@@ -26,7 +26,12 @@ def full_uncertainty_analysis(cen, vc_out, sa_out, iua_out, **inputs):
     delta_lam = inputs["delta_lam"]
     theta = inputs["theta"]
     delta_theta = inputs["delta_theta"]
-    delta_freq_tb = iua_out["peak_velocity_freq_uncert"]
+
+    # compute uncertainties at peak velocity point
+    peak_velocity_idx = vc_out["peak_velocity_idx"]
+    peak_velocity_freq_uncert = iua_out["freq_uncert"][peak_velocity_idx]
+    peak_velocity_vel_uncert = iua_out["vel_uncert"][peak_velocity_idx]
+    delta_freq_tb = peak_velocity_freq_uncert
     delta_freq_td = sa_out["max_ten_freq_uncert"]
     delta_time_c = iua_out["tau"]
     delta_time_d = iua_out["tau"]
@@ -90,6 +95,11 @@ def full_uncertainty_analysis(cen, vc_out, sa_out, iua_out, **inputs):
     )
 
     # save outputs to a dictionary
-    fua_out = {"spall_uncert": delta_spall, "strain_rate_uncert": delta_strain_rate}
+    fua_out = {
+        "spall_uncert": delta_spall,
+        "strain_rate_uncert": delta_strain_rate,
+        "peak_velocity_freq_uncert": peak_velocity_freq_uncert,
+        "peak_velocity_vel_uncert": peak_velocity_vel_uncert,
+    }
 
     return fua_out

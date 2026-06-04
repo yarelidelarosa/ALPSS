@@ -12,7 +12,7 @@ from alpss.utils.phases import (
 from alpss.utils.logging import setup_alpss_logger
 from alpss.utils.defaults import (
     default_spall_output,
-    default_uncertainty_output,
+    default_spall_uncertainty_output,
     default_hel_output,
     default_shock_output,
 )
@@ -50,7 +50,7 @@ def alpss_main(**inputs):
     # --- Phase 2b: Spall uncertainty analysis ---
     sua_out, spall_uncertainty_ok, spall_uncertainty_error = run_spall_uncertainty_phase(
         cen, vc_out, sa_out, iua_out, spall_ok, **inputs
-    ) if velocity_ok else (default_uncertainty_output(), False, "spall_uncertainty: skipped due to velocity_ok=false")
+    ) if velocity_ok else (default_spall_uncertainty_output(), False, "spall_uncertainty: skipped due to velocity_ok=false")
     if spall_uncertainty_error:
         errors.append(spall_uncertainty_error)
 

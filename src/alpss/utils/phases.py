@@ -20,7 +20,7 @@ from alpss.plotting.plots import plot_results
 from alpss.plotting.hel import plot_hel_detection
 from alpss.utils.defaults import (
     default_spall_output,
-    default_uncertainty_output,
+    default_spall_uncertainty_output,
     default_shock_output,
     default_hel_output,
 )
@@ -130,7 +130,7 @@ def run_spall_phase(vc_out, iua_out, **inputs) -> tuple:
 
 def run_spall_uncertainty_phase(cen, vc_out, sa_out, iua_out, spall_ok, **inputs) -> tuple:
     """Phase 2b: Spall uncertainty analysis. Returns (sua_out, spall_uncertainty_ok, error_msg)."""
-    sua_out = default_uncertainty_output()
+    sua_out = default_spall_uncertainty_output()
     spall_uncertainty_ok = False
     error_msg = None
 

@@ -18,7 +18,10 @@ def plot_results(
     shock_out,
     start_time,
     end_time,
-    errors,
+    velocity_ok,
+    spall_ok,
+    spall_uncertainty_ok,
+    hel_ok,
     **inputs,
 ):
 
@@ -413,10 +416,18 @@ def plot_results(
     ax13.axis("tight")
     ax13.axis("off")
 
-    # Display errors if any
-    if errors:
-        error_text = "ERRORS: " + "; ".join(errors)
-        fig.text(0.5, 0.98, error_text, ha="center", va="top", fontsize=10, color="red", wrap=True)
+    # Display phase status
+    phase_status = []
+    phase_status.append(f"velocity: {'succeeded' if velocity_ok else 'failed'}")
+    phase_status.append(f"spall: {'succeeded' if spall_ok else 'failed'}")
+    phase_status.append(f"spall_uncertainty: {'succeeded' if spall_uncertainty_ok else 'failed'}")
+    phase_status.append(f"hel: {'succeeded' if hel_ok else 'failed'}")
+
+    status_text = "Phase Status: " + " | ".join(phase_status)
+    status_text += "\nSee results.csv for error details"
+
+    fig.text(0.5, 0.48, status_text, ha="center", va="center", fontsize=11,
+             bbox=dict(boxstyle="round,pad=0.5", facecolor="lightyellow", alpha=0.8))
 
     # fix the layout
     plt.tight_layout()

@@ -247,7 +247,10 @@ def run_output_phase(
         shock_out,
         start_time,
         end_time,
-        errors=errors,
+        velocity_ok,
+        spall_ok,
+        spall_uncertainty_ok,
+        hel_out.ok,
         **inputs,
     )
 

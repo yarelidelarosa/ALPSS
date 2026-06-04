@@ -27,9 +27,12 @@ from alpss.utils.defaults import (
 logger = logging.getLogger("alpss")
 
 
-def run_velocity_phase(**inputs) -> dict:
-    """Run Phase 1 (velocity processing). Returns sdf_out, cen, cf_out, vc_out, iua_out, start_time, end_time."""
+def run_velocity_phase(**inputs) -> tuple:
+    """Run Phase 1 (velocity processing). Returns (vel_out, velocity_ok, error_msg)."""
     start_time = datetime.now()
+    velocity_ok = False
+    error_msg = None
+    vel_out = {}
 
     try:
         data = extract_data(inputs)
@@ -61,7 +64,7 @@ def run_velocity_phase(**inputs) -> dict:
         end_time = datetime.now()
         logger.info("Velocity processing complete in %s", end_time - start_time)
 
-        return {
+        vel_out = {
             "sdf_out": sdf_out,
             "cen": cen,
             "cf_out": cf_out,
@@ -70,17 +73,20 @@ def run_velocity_phase(**inputs) -> dict:
             "start_time": start_time,
             "end_time": end_time,
         }
+        velocity_ok = True
+
     except Exception as e:
+        error_msg = f"velocity: {e}"
         logger.error("Error in velocity processing: %s", str(e))
         logger.error("Traceback: %s", traceback.format_exc())
         try:
-            from alpss.io.reading import extract_data
             from alpss.plotting.plots import plot_voltage
 
             plot_voltage(extract_data(inputs), **inputs)
         except Exception:
             logger.error("Fallback voltage plot also failed.")
-        raise
+
+    return vel_out, velocity_ok, error_msg
 
 
 def run_spall_phase(vc_out, iua_out, **inputs) -> tuple:

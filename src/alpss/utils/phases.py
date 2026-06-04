@@ -67,10 +67,7 @@ def run_velocity_phase(**inputs) -> tuple:
         vc_out.update(vu_out)
         logger.info("Velocity uncertainties computed")
 
-        end_time = datetime.now()
-        logger.info("Velocity processing complete in %s", end_time - start_time)
-        vel_out["start_time"] = start_time
-        vel_out["end_time"] = end_time
+        logger.info("Velocity processing complete")
 
         ### Velocity Qualifiers ###
         min_velocity = inputs["min_velocity_threshold"]
@@ -96,6 +93,9 @@ def run_velocity_phase(**inputs) -> tuple:
         except Exception:
             logger.error("Fallback voltage plot also failed.")
 
+    end_time = datetime.now()
+    vel_out["start_time"] = start_time
+    vel_out["end_time"] = end_time
     error_msg = f"velocity: {'; '.join(errors)}" if errors else None
     return vel_out, velocity_ok, error_msg
 

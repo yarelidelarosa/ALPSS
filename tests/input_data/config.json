@@ -77,7 +77,7 @@
     },
     "plotting": {
         "cmap": "viridis",
-        "plot_figsize": [80, 40],
+        "plot_figsize": [30, 10],
         "plot_dpi": 300
     }
 }

@@ -73,7 +73,6 @@ def run_velocity_phase(**inputs) -> tuple:
         max_uncertainty = inputs["max_velocity_uncertainty_threshold"]
 
         # min velocity qualifier
-        # max_vel = np.max(vc_out["velocity_f_smooth"])
         if vc_out['v_max_comp'] < min_velocity:
             velocity_ok = False
             errors.append(f"Velocity {vc_out['v_max_comp']} did not exceed minimum velocity of ({min_velocity})")
@@ -94,6 +93,8 @@ def run_velocity_phase(**inputs) -> tuple:
             plot_voltage(extract_data(inputs), errors=errors, **inputs)
         except Exception:
             logger.error("Fallback voltage plot also failed.")
+        # Re-raise to exit pipeline early after fallback plot
+        raise
 
     end_time = datetime.now()
     vel_out["start_time"] = start_time

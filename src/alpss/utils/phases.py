@@ -69,17 +69,19 @@ def run_velocity_phase(**inputs) -> tuple:
 
         logger.info("Velocity processing complete")
 
-        # Velocity Qualifiers 
         min_velocity = inputs["min_velocity_threshold"]
         max_uncertainty = inputs["max_velocity_uncertainty_threshold"]
 
-        if np.max(vc_out["velocity_f_smooth"]) < min_velocity:
+        # min velocity qualifier
+        # max_vel = np.max(vc_out["velocity_f_smooth"])
+        if vc_out['v_max_comp'] < min_velocity:
             velocity_ok = False
-            errors.append(f"Velocity did not exceed minimum velocity of ({min_velocity})")
+            errors.append(f"Velocity {vc_out['v_max_comp']} did not exceed minimum velocity of ({min_velocity})")
 
-        if np.mean(iua_out["vel_uncert"]) > max_uncertainty:
+        # max uncertainty qualifier
+        if vu_out['peak_velocity_vel_uncert'] > max_uncertainty:
             velocity_ok = False
-            errors.append(f"Uncertainty too high (>{max_uncertainty})")
+            errors.append(f"Uncertainty of value {vu_out['peak_velocity_vel_uncert']} is too high (>{max_uncertainty})")
 
     except Exception as e:
         velocity_ok = False

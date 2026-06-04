@@ -39,6 +39,10 @@ def spall_uncertainty_analysis(cen, vc_out, sa_out, iua_out, **inputs):
     freq_tc = freq_tb
     delta_freq_tc = delta_freq_tb
 
+    # convert angles to radians
+    theta = theta * (np.pi / 180)
+    delta_theta = delta_theta * (np.pi / 180)
+
     # calculate the individual terms for spall uncertainty
     term1 = (
         -0.5

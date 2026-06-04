@@ -2,6 +2,7 @@ import logging
 import traceback
 from datetime import datetime
 import os
+import numpy as np
 
 from alpss.io.reading import extract_data
 from alpss.io.saving import save
@@ -44,18 +45,23 @@ def run_velocity_phase(**inputs) -> tuple:
             sdf_out["t_doi_start"],
             sdf_out["t_doi_end"],
         )
+        vel_out["sdf_out"] = sdf_out
 
         cen = carrier_frequency(sdf_out, **inputs)
         logger.info("Carrier frequency: %.6e Hz", cen)
+        vel_out["cen"] = cen
 
         cf_out = carrier_filter(sdf_out, cen, **inputs)
         logger.info("Carrier filter applied")
+        vel_out["cf_out"] = cf_out
 
         vc_out = velocity_calculation(sdf_out, cen, cf_out, **inputs)
         logger.info("Velocity calculated (%d points)", len(vc_out["time_f"]))
+        vel_out["vc_out"] = vc_out
 
         iua_out = instantaneous_uncertainty_analysis(sdf_out, vc_out, cen, **inputs)
         logger.info("Instantaneous uncertainty computed")
+        vel_out["iua_out"] = iua_out
 
         vu_out = velocity_uncertainty_analysis(vc_out, iua_out)
         vc_out.update(vu_out)
@@ -63,17 +69,21 @@ def run_velocity_phase(**inputs) -> tuple:
 
         end_time = datetime.now()
         logger.info("Velocity processing complete in %s", end_time - start_time)
+        vel_out["start_time"] = start_time
+        vel_out["end_time"] = end_time
 
-        vel_out = {
-            "sdf_out": sdf_out,
-            "cen": cen,
-            "cf_out": cf_out,
-            "vc_out": vc_out,
-            "iua_out": iua_out,
-            "start_time": start_time,
-            "end_time": end_time,
-        }
-        velocity_ok = True
+        ### Velocity Qualifiers ###
+        min_velocity = inputs.get("min_velocity_threshold", 25)
+        max_uncertainty = inputs.get("max_velocity_uncertainty_threshold", 10)
+
+        if np.max(vc_out["velocity_f_smooth"]) < min_velocity:
+            velocity_ok = False
+            error_msg = f"velocity: Velocity did not exceed noise floor ({min_velocity})"
+        elif np.mean(iua_out["vel_uncert"]) > max_uncertainty:
+            velocity_ok = False
+            error_msg = f"velocity: Uncertainty too high (>{max_uncertainty})"
+        else:
+            velocity_ok = True
 
     except Exception as e:
         error_msg = f"velocity: {e}"

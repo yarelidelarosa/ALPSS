@@ -125,7 +125,6 @@ def save(
         "Velocity OK": velocity_ok,
         "Velocity at Max Compression": vc_out["v_max_comp"],
         "Time at Max Compression": vc_out["t_max_comp"],
-        "Peak Shock Stress": shock_out["peak_shock_stress"],
         "Carrier Frequency": cen,
     })
 
@@ -173,6 +172,11 @@ def save(
         "Spect Velocity Res": 0.5 * (inputs["lam"] * sdf_out["f_res"]),
         "Signal Start Time": sdf_out["t_start_corrected"],
         "Smoothing Characteristic Time": iua_out["tau"],
+    })
+
+    # Shock phase
+    results_to_save.update({
+        "Peak Shock Stress": shock_out["peak_shock_stress"],
     })
 
     # Convert the dictionary to a DataFrame

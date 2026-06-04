@@ -12,12 +12,14 @@ from alpss.velocity.calculation import velocity_calculation
 from alpss.analysis.instantaneous_uncertainty import instantaneous_uncertainty_analysis
 from alpss.analysis.spall import spall_analysis
 from alpss.analysis.full_uncertainty import full_uncertainty_analysis
+from alpss.analysis.shock import shock_analysis
 from alpss.analysis.hel import hel_detection
 from alpss.plotting.plots import plot_results
 from alpss.plotting.hel import plot_hel_detection
 from alpss.utils.defaults import (
     default_spall_output,
     default_uncertainty_output,
+    default_shock_output,
     default_hel_output,
 )
 
@@ -159,6 +161,24 @@ def run_hel_phase(vc_out, iua_out, **inputs) -> tuple:
     return hel_out, error_msg
 
 
+def run_shock_phase(vc_out, **inputs) -> tuple:
+    """Phase 2d: Shock analysis. Returns (shock_out, error_msg)."""
+    shock_out = default_shock_output()
+    error_msg = None
+
+    try:
+        logger.info("Running shock analysis...")
+        shock_out = shock_analysis(vc_out, **inputs)
+        logger.info("Shock analysis complete: peak shock stress=%.4f Pa", shock_out["peak_shock_stress"])
+    except Exception as e:
+        error_msg = f"shock: {e}"
+        logger.error("Error in shock analysis: %s", str(e))
+        logger.error("Traceback: %s", traceback.format_exc())
+        logger.info("Continuing without shock analysis.")
+
+    return shock_out, error_msg
+
+
 def run_output_phase(
     sdf_out,
     cen,
@@ -167,6 +187,7 @@ def run_output_phase(
     sa_out,
     iua_out,
     fua_out,
+    shock_out,
     hel_out,
     start_time,
     end_time,
@@ -186,6 +207,7 @@ def run_output_phase(
         sa_out,
         iua_out,
         fua_out,
+        shock_out,
         start_time,
         end_time,
         **inputs,
@@ -223,6 +245,7 @@ def run_output_phase(
         sa_out,
         iua_out,
         fua_out,
+        shock_out,
         start_time,
         end_time,
         fig,

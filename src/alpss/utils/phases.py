@@ -32,7 +32,7 @@ def run_velocity_phase(**inputs) -> tuple:
     """Run Phase 1 (velocity processing). Returns (vel_out, velocity_ok, error_msg)."""
     start_time = datetime.now()
     velocity_ok = True
-    error_msg = None
+    errors = []
     vel_out = {}
 
     try:
@@ -78,18 +78,15 @@ def run_velocity_phase(**inputs) -> tuple:
 
         if np.max(vc_out["velocity_f_smooth"]) < min_velocity:
             velocity_ok = False
-            error_msg = f"velocity: Velocity did not exceed noise floor ({min_velocity})"
+            errors.append(f"Velocity did not exceed minimum velocity of ({min_velocity})")
 
         if np.mean(iua_out["vel_uncert"]) > max_uncertainty:
             velocity_ok = False
-            if error_msg:
-                error_msg += f" and Uncertainty too high (>{max_uncertainty})"
-            else:
-                error_msg = f"velocity: Uncertainty too high (>{max_uncertainty})"
+            errors.append(f"Uncertainty too high (>{max_uncertainty})")
 
     except Exception as e:
         velocity_ok = False
-        error_msg = f"velocity: {e}"
+        errors.append(str(e))
         logger.error("Error in velocity processing: %s", str(e))
         logger.error("Traceback: %s", traceback.format_exc())
         try:
@@ -99,6 +96,7 @@ def run_velocity_phase(**inputs) -> tuple:
         except Exception:
             logger.error("Fallback voltage plot also failed.")
 
+    error_msg = f"velocity: {'; '.join(errors)}" if errors else None
     return vel_out, velocity_ok, error_msg
 
 

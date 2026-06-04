@@ -17,13 +17,7 @@ def spall_uncertainty_analysis(cen, vc_out, sa_out, iua_out, spall_ok, **inputs)
     in Thin Metal Foils. Exp Mech 59, 611–628 (2019). https://doi.org/10.1007/s11340-019-00519-x
     """
 
-    # initialize spall-related uncertainties
-    delta_spall = np.nan
-    delta_strain_rate = np.nan
-
-    # compute spall-related uncertainties only if spall analysis succeeded
-    if spall_ok:
-        # unpack dictionary values needed for spall calculations
+    # unpack dictionary values needed for spall calculations
         rho = inputs["density"]
         C0 = inputs["C0"]
         lam = inputs["lam"]

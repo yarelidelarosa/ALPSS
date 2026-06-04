@@ -39,26 +39,22 @@ def spall_uncertainty_analysis(cen, vc_out, sa_out, iua_out, **inputs):
     freq_tc = freq_tb
     delta_freq_tc = delta_freq_tb
 
-    # convert angles to radians
-    theta_rad = theta * (np.pi / 180)
-    delta_theta_rad = delta_theta * (np.pi / 180)
-
     # calculate the individual terms for spall uncertainty
     term1 = (
         -0.5
         * rho
         * C0
         * (lam / 2)
-        * np.tan(theta_rad)
-        * (1 / np.cos(theta_rad))
+        * np.tan(theta)
+        * (1 / np.cos(theta))
         * (freq_tb - freq_td)
-        * delta_theta_rad
+        * delta_theta
     )
-    term2 = 0.5 * rho * C0 * (lam / (2 * np.cos(theta_rad))) * delta_freq_tb
-    term3 = -0.5 * rho * C0 * (lam / (2 * np.cos(theta_rad))) * delta_freq_td
-    term4 = 0.5 * rho * C0 * (1 / (2 * np.cos(theta_rad))) * (freq_tb - freq_td) * delta_lam
-    term5 = 0.5 * rho * (lam / (2 * np.cos(theta_rad))) * (freq_tb - freq_td) * delta_C0
-    term6 = 0.5 * C0 * (lam / (2 * np.cos(theta_rad))) * (freq_tb - freq_td) * delta_rho
+    term2 = 0.5 * rho * C0 * (lam / (2 * np.cos(theta))) * delta_freq_tb
+    term3 = -0.5 * rho * C0 * (lam / (2 * np.cos(theta))) * delta_freq_td
+    term4 = 0.5 * rho * C0 * (1 / (2 * np.cos(theta))) * (freq_tb - freq_td) * delta_lam
+    term5 = 0.5 * rho * (lam / (2 * np.cos(theta))) * (freq_tb - freq_td) * delta_C0
+    term6 = 0.5 * C0 * (lam / (2 * np.cos(theta))) * (freq_tb - freq_td) * delta_rho
 
     # calculate spall uncertainty
     delta_spall = np.sqrt(
@@ -68,15 +64,15 @@ def spall_uncertainty_analysis(cen, vc_out, sa_out, iua_out, **inputs):
     # calculate the individual terms for strain rate uncertainty
     d_f = freq_tc - freq_td
     d_t = time_d - time_c
-    term7 = (-lam / (4 * C0**2 * np.cos(theta_rad))) * (d_f / d_t) * delta_C0
-    term8 = (1 / (4 * C0 * np.cos(theta_rad))) * (d_f / d_t) * delta_lam
+    term7 = (-lam / (4 * C0**2 * np.cos(theta))) * (d_f / d_t) * delta_C0
+    term8 = (1 / (4 * C0 * np.cos(theta))) * (d_f / d_t) * delta_lam
     term9 = (
-        ((lam * np.tan(theta_rad)) / (4 * C0 * np.cos(theta_rad))) * (d_f / d_t) * delta_theta_rad
+        ((lam * np.tan(theta)) / (4 * C0 * np.cos(theta))) * (d_f / d_t) * delta_theta
     )
-    term10 = (lam / (4 * C0 * np.cos(theta_rad))) * (1 / d_t) * delta_freq_tc
-    term11 = (-lam / (4 * C0 * np.cos(theta_rad))) * (1 / d_t) * delta_freq_td
-    term12 = (-lam / (4 * C0 * np.cos(theta_rad))) * (d_f / d_t**2) * delta_time_c
-    term13 = (lam / (4 * C0 * np.cos(theta_rad))) * (d_f / d_t**2) * delta_time_d
+    term10 = (lam / (4 * C0 * np.cos(theta))) * (1 / d_t) * delta_freq_tc
+    term11 = (-lam / (4 * C0 * np.cos(theta))) * (1 / d_t) * delta_freq_td
+    term12 = (-lam / (4 * C0 * np.cos(theta))) * (d_f / d_t**2) * delta_time_c
+    term13 = (lam / (4 * C0 * np.cos(theta))) * (d_f / d_t**2) * delta_time_d
 
     # calculate strain rate uncertainty
     delta_strain_rate = np.sqrt(

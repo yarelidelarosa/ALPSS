@@ -416,18 +416,18 @@ def plot_results(
     ax13.axis("tight")
     ax13.axis("off")
 
-    # Display phase status
-    phase_status = []
-    phase_status.append(f"velocity: {'succeeded' if velocity_ok else 'failed'}")
-    phase_status.append(f"spall: {'succeeded' if spall_ok else 'failed'}")
-    phase_status.append(f"spall_uncertainty: {'succeeded' if spall_uncertainty_ok else 'failed'}")
-    phase_status.append(f"hel: {'succeeded' if hel_ok else 'failed'}")
+    # Display phase status with color coding
+    fig.text(0.5, 0.52, "Phase Status", ha="center", va="top", fontsize=12, weight="bold")
 
-    status_text = "Phase Status: " + " | ".join(phase_status)
-    status_text += "\nSee results.csv for error details"
+    y_pos = 0.49
+    for phase_name, phase_ok in [("velocity", velocity_ok), ("spall", spall_ok),
+                                  ("spall_uncertainty", spall_uncertainty_ok), ("hel", hel_ok)]:
+        status = "succeeded" if phase_ok else "failed"
+        color = "green" if phase_ok else "red"
+        fig.text(0.5, y_pos, f"{phase_name}: {status}", ha="center", va="top", fontsize=10, color=color, weight="bold")
+        y_pos -= 0.03
 
-    fig.text(0.5, 0.48, status_text, ha="center", va="center", fontsize=11,
-             bbox=dict(boxstyle="round,pad=0.5", facecolor="lightyellow", alpha=0.8))
+    fig.text(0.5, y_pos - 0.01, "See results.csv for error details", ha="center", va="top", fontsize=9, style="italic")
 
     # fix the layout
     plt.tight_layout()

@@ -3,6 +3,7 @@ import argparse
 from alpss.alpss_watcher import Watcher
 from alpss.alpss_main import alpss_main
 from alpss.alpss_multipoint import alpss_multipoint
+from alpss.utils.config import flatten_config
 import os
 import json
 import logging
@@ -26,6 +27,7 @@ def load_json_config(config):
         "Invalid config input: Provide a dictionary or a valid JSON file path."
     )
 
+
 def alpss_main_with_config(config=None):
     """
     Run ALPSS with a given JSON configuration.
@@ -34,7 +36,7 @@ def alpss_main_with_config(config=None):
         config (str or dict, optional): JSON config file, either given as parsable argument through CLI or directly as a string, or a dictionary containing config parameters.
     """
 
-    if config is None: 
+    if config is None:
         # If called from CLI, parse arguments
         parser = argparse.ArgumentParser(
             description="Run ALPSS using a JSON config file"
@@ -49,26 +51,12 @@ def alpss_main_with_config(config=None):
     else:
         config = load_json_config(config)
 
-    # Run ALPSS with the loaded config
+    # alpss_main flattens nested sections internally
     return alpss_main(**config)
 
 def alpss_multipoint_with_config(config=None):
     """
-    Run alpss_multipoint with a given JSON configuration.
-
-    The JSON file should have the following structure::
-
-        {
-            "channels": {
-                "ch1": [{"tar_lam": 1550.000, "ref_lam": 1550.016, "probe_number": 10}],
-                "ch2": [{"tar_lam": 1531.116, "ref_lam": 1531.132, "probe_number": 6},
-                        {"tar_lam": 1537.397, "ref_lam": 1537.429, "probe_number": 9}]
-            },
-            "filepath": "C:/data/shot_{channel}.csv",
-            "freq_lower": 1e9,
-            "freq_upper": 2e9,
-            ... (all shared alpss_main kwargs) ...
-        }
+    Run alpss_multipoint with a given nested-section JSON configuration.
 
     Args:
         config (str or dict, optional): Path to a JSON config file or a dict.
@@ -85,16 +73,24 @@ def alpss_multipoint_with_config(config=None):
     else:
         config = load_json_config(config)
 
-    config = dict(config)  # shallow copy so we can pop without mutating caller's dict
+    # Flatten all sections into a single dict, then extract multipoint-specific keys
+    flat = flatten_config(config)
 
-    raw_channels = config.pop("channels")
+    raw_channels = flat.pop("channels")
     channels = {name: pd.DataFrame(rows) for name, rows in raw_channels.items()}
 
-    filepath = config.pop("filepath")
-    freq_lower = config.pop("freq_lower", 1e9)
-    freq_upper = config.pop("freq_upper", 1e9)
-    freq_refine_lower = config.pop("freq_refine_lower", None)
-    freq_refine_upper = config.pop("freq_refine_upper", None)
+    filepath = flat.pop("filepath")
+    freq_lower = flat.pop("freq_lower", 1e9)
+    freq_upper = flat.pop("freq_upper", 1e9)
+    freq_refine_lower = flat.pop("freq_refine_lower", None)
+    freq_refine_upper = flat.pop("freq_refine_upper", None)
+
+    # Set per-probe by the wrapper; remove from shared kwargs to avoid conflicts
+    flat.pop("freq_min", None)
+    flat.pop("freq_max", None)
+    flat.pop("lam", None)
+    flat.pop("multipoint", None)
+
     return alpss_multipoint(
         channels=channels,
         filepath=filepath,
@@ -102,7 +98,7 @@ def alpss_multipoint_with_config(config=None):
         freq_upper=freq_upper,
         freq_refine_lower=freq_refine_lower,
         freq_refine_upper=freq_refine_upper,
-        **config,
+        **flat,
     )
 
 

@@ -1,7 +1,7 @@
 import logging
 from alpss.alpss_main import alpss_main
 from alpss.carrier.freq_refinement import find_carrier
-from alpss.utils import extract_data
+from alpss.io.reading import extract_data
 
 logger = logging.getLogger("alpss")
 

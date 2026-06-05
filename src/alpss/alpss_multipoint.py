@@ -2,6 +2,7 @@ import logging
 from alpss.alpss_main import alpss_main
 from alpss.carrier.freq_refinement import find_carrier
 from alpss.io.reading import extract_data
+from alpss.io.multipoint_saving import save_combined_series
 
 logger = logging.getLogger("alpss")
 
@@ -72,6 +73,7 @@ def alpss_multipoint(
             freq_refine_upper = freq_refine_lower
 
     results = []
+    probe_numbers = []
     voltage_idx = 1
     for channel_name, channel_df in channels.items():
         for _, row in channel_df.iterrows():
@@ -147,6 +149,11 @@ def alpss_multipoint(
                 )
                 results.append(None)
 
+            probe_numbers.append(probe_number)
+
         voltage_idx += 1
+
+    if kwargs.get("save_data"):
+        save_combined_series(results, probe_numbers, filepath, kwargs["out_files_dir"])
 
     return results

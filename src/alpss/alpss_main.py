@@ -30,11 +30,12 @@ def alpss_main(**inputs):
     # --- Phase 1: Velocity Processing ---
     vel, velocity_ok, velocity_error = run_velocity_phase(**inputs)
 
-    sdf_out = vel.get("sdf_out", {})
-    cen = vel.get("cen")
-    cf_out = vel.get("cf_out", {})
-    vc_out = vel.get("vc_out", {})
-    iua_out = vel.get("iua_out", {})
+
+    sdf_out = vel["sdf_out"]
+    cen = vel["cen"]
+    cf_out = vel["cf_out"]
+    vc_out = vel["vc_out"]
+    iua_out = vel["iua_out"]
     start_time = vel["start_time"]
     end_time = vel["end_time"]
 

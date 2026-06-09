@@ -380,6 +380,12 @@ def plot_results(
         ax11.set_ylim([0, iua_out["freq_uncert_scaling"] * (inputs["lam"] / 2)])
 
     # table to show results of the run
+    phase_status = " | ".join([
+        f"{name}: {'✓' if ok else '✗'}"
+        for name, ok in [("velocity", velocity_ok), ("spall", spall_ok),
+                         ("spall_uncertainty", spall_uncertainty_ok), ("hel", hel_ok)]
+    ])
+
     run_data1 = {
         "Name": [
             "Date",
@@ -390,6 +396,7 @@ def plot_results(
             "Peak Shock Stress (GPa)",
             "Strain Rate (x1e6)",
             "Spall Strength (GPa)",
+            "Phase Status",
         ],
         "Value": [
             start_time.strftime("%b %d %Y"),
@@ -400,6 +407,7 @@ def plot_results(
             round(shock_out["peak_shock_stress"] / 1e9, 6),
             rf"{round(sa_out['strain_rate_est'] / 1e6, 6)} $\pm$ {round(fua_out['strain_rate_uncert'] / 1e6, 6)}",
             rf"{round(sa_out['spall_strength_est'] / 1e9, 6)} $\pm$ {round(fua_out['spall_uncert'] / 1e9, 6)}",
+            phase_status,
         ],
     }
 
@@ -413,20 +421,14 @@ def plot_results(
     table1.set_fontsize(8)
     table1.auto_set_column_width([0, 1])
     table1.scale(1, 1.2)
+
+    # Color code the phase status row
+    status_color = "#90EE90" if (velocity_ok and spall_ok and spall_uncertainty_ok and hel_ok) else "#FFB6C6"
+    table1[(len(df1), 0)].set_facecolor(status_color)
+    table1[(len(df1), 1)].set_facecolor(status_color)
+
     ax13.axis("tight")
     ax13.axis("off")
-
-    # Display phase status with color coding
-    y_pos = 0.52
-    fig.text(0.3, y_pos, "Phase Status", ha="left", va="center", fontsize=11, weight="bold")
-    y_pos -= 0.04
-
-    for phase_name, phase_ok in [("velocity", velocity_ok), ("spall", spall_ok),
-                                  ("spall_uncertainty", spall_uncertainty_ok), ("hel", hel_ok)]:
-        status = "succeeded" if phase_ok else "failed"
-        color = "green" if phase_ok else "red"
-        fig.text(0.3, y_pos, f"{phase_name}: {status}", ha="left", va="center", fontsize=10, color=color, weight="bold")
-        y_pos -= 0.035
 
     # fix the layout
     plt.tight_layout()

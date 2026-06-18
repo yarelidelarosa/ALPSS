@@ -36,6 +36,6 @@ class Material:
     root2=(-b-math.sqrt(discriminant))/(2*a)
 
     if 0<=root1<=V:    #particle velocity has to be between 0 and impact speed V. Returns speed that makes sense
-      return root 1
+      return root1
     else: 
-      return root 2
+      return root2

@@ -1,5 +1,0 @@
-import math
-class Material: 
-  def __init__(self, density, CO, S, name=""):
-    if density<=0
-      raise ValueError

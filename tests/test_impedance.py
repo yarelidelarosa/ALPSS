@@ -2,9 +2,9 @@ from alpss.analysis.impedance import Material, particle_veloctiy, check_case1
 
 #(density, C0 (speed of sound), S (), name)
 #(kg/m^3, m/s, number)
-COPPER= Material (8960.0, , "Copper") #from MIT website, thier material prop. database
+COPPER= Material (8960.0, 3958.37, 1.489, "Copper") #from MIT website, thier material prop. database
 #calc. for speed of sound in documentation
-ALUMINUM= Material (2700.0, , "Aluminum") #from MIT website, thier material prop. database
+ALUMINUM= Material (2700.0, 4830.46, 1.338,"Aluminum") #from MIT website, thier material prop. database
 #calc. for speed of sound in documentation
 
 def close (a,b):

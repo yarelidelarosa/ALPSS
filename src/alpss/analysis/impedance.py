@@ -1,6 +1,6 @@
 import math
 class Material: 
-  def __init__(self, density, C0, S, name=""):
+  def __init__(self, density, C0, S, name=""):#p(density), bulk sound speed(C0), Hugonoit slope(S)
     if density<=0:
       raise ValueError("density must be a positive number")
     if C0<= 0:
@@ -9,7 +9,7 @@ class Material:
     self.C0=C0
     self.S=S
     self.name-name
-  def check_case1 (flyer,target):
+  def is_symmetric_impact (flyer,target):
     if target is None: 
       return True
     tiny=0.000001  #2 numbers are the same if they have small difference 
@@ -18,6 +18,14 @@ class Material:
     same_S =abs(flyer.S - target.S) < tiny
     
     return same_density and same_C0 and same_S
+
+  def check_case1 (flyer, target):
+    if target is None: 
+      return False
+    flyer_impedance=flyer.density*flyer.C0
+    target_impedance = target.density*target.C0
+    return target_impedance > flyer_impedance
+    
   def particle_velocity(flyer_velocity, flyer, target=None): 
     V=flyer_velocity
     if V < 0: 

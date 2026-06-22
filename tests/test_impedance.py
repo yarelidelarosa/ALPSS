@@ -3,9 +3,11 @@ from alpss.analysis.impedance import Material, particle_veloctiy, check_case1
 #(density, C0 (speed of sound), S (), name)
 #(kg/m^3, m/s, number)
 COPPER= Material (8960.0, 3958.37, 1.489, "Copper") #from MIT website, thier material prop. database
-#calc. for speed of sound in documentation
+#calc. for speed of sound in 
+GLASS = Material(2440, 4198, 1.61, "Glass")
 ALUMINUM= Material (2700.0, 4830.46, 1.338,"Aluminum") #from MIT website, thier material prop. database
 #calc. for speed of sound in documentation
+TITANIUM = Material (4510.0, 4961.0, 0.957, "Titanium")
 
 def close (a,b):
   return abs(a - b) < 1e-6*max(1.0,abs(a),abs(b))

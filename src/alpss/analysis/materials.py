@@ -1,7 +1,7 @@
 from alpss.analysis.impedance import Material
 MATERIAL_TABLE = {
-  "copper": (), 
-  "aluminum": (), 
+  "copper": (8960.0, 3958.37, 1.489), 
+  "aluminum": (2700.0, 4830.46, 1.338), 
 }
 def list_materials():
   return sorted(MATERIAL_TABLE.keys())

@@ -13,6 +13,26 @@ def pressure_sample (material, u):
   return material.density* (material.C0 + material.S* u) * u
 def pressure_flyer (material, u, V):
   return material.density * (material.C0 + material.S * (V-u)) * (V-u)
+def test_same_material_gives_half():
+  for V in [10.0, 100.0, 1000.0, 3000.0]:
+    assert close (particle_velocity(V, COPPER), V/2)
+    assert close (particle_velocity(V,COPPER, COPPER), V/2)
+
+def test_pressures_match_for_different_materials():
+  pairs= [(COPPER, ALUMINUM), (ALUMINUM, COPPER]
+  for flyer, sample in pairs: 
+    V=1500.0
+    u_p=particle_velocity(V, flyer, sample)
+    assert close (pressure_flyer(flyer, u_p,V), pressure_sample(sample, u_p))
+
+def test_answer_is_between_zero_and_V():
+  V=1500.0
+  for flyer, sample in [(COPPER, ALUMINUM), (ALUMINUM, COPPER)]: 
+    u_p=particle_velocity (V, flyer, sample)
+    assert 0.0 < u_p < V
+
+def test_stiff_vs_soft_direction():
+  assert particle_velocity(1000.0, COPP)
 
 if __name__=="__main__": 
   print ("")

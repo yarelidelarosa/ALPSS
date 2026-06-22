@@ -1,4 +1,4 @@
-from alpss.analysis.impedance import Material, particle_veloctiy, check_case1
+from alpss.analysis.impedance import (Material, particle_veloctiy, is_symmetric_impact, check_case1)
 
 #(density, C0 (speed of sound), S (), name)
 #(kg/m^3, m/s, number)
@@ -37,11 +37,18 @@ def test_stiff_vs_soft_direction():
   assert particle_velocity(1000.0, COPPER, GLASS) > 500.0
   assert particle_velocity(1000.0, GLASS, COPPER) < 500.0
 
-def test_check_case1():
+def test_is_symmetric_impact():
   assert check_case1 (COPPER, None) is True #no sample given
   assert check_case1 (COPPER, COPPER) is True #same material
   assert check_case1 (COPPER, GLASS) is False #different materials
 
+def test_case1_higher_impedance_target():
+  assert check_case1(COPPER, TITANIUM) is True #into stiffer target
+  assert check_case1(TITANIUM, COPPER) is False #into softer target
+  assert check_case1(COPPER, GLASS) is False #copper into softer material
+  assert check_case1(COPPER, COPPER) is False #same material
+  assert check_case1(COPPER, None) is False  
+  
 def test_zero_speed_gives_zero():
   assert particle_velocity(0.0, COPPER, GLASS) == 0.0
 

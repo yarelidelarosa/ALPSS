@@ -36,7 +36,7 @@ def materials_from_confrig(inputs):
     flyer_given = True
 
   if flyer_given: 
-    flyer = material_from_config(inputs, prefix="flyer")
+    flyer = material_from_confrig(inputs, prefix="flyer")
   else: 
     flyer = target
   return flyer, target

@@ -1,4 +1,4 @@
-from alpss.analysis.impedance import (Material, particle_veloctiy, is_symmetric_impact, check_case1)
+from alpss.analysis.impedance import (Material, particle_velocity, is_symmetric_impact, check_case1)
 
 #(density, C0 (speed of sound), S (), name)
 #(kg/m^3, m/s, number)
@@ -71,7 +71,8 @@ if __name__=="__main__":
   test_pressures_match_for_different_materials()
   test_answer_is_between_zero_and_V()
   test_stiff_vs_soft_direction()
-  test_check_case1()
+  test_is_symmetric_impact()
+  test_case1_higher_impedance_target()
   test_zero_speed_gives_zero()
   test_negative_speed_is_rejected()
   test_bad_material_is_rejected()

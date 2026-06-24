@@ -14,21 +14,24 @@ def get_material(name):
       "Known materials are:"+", ".join(list_materials())
     )
   density, C0, S = MATERIAL_TABLE[key]
-  return Material(density, C0, S, name=name)
+  return Material(density, C0, S, name)
 
-def material_from_confrig(inputs, prefix=""):
+def material_from_config(inputs, prefix=""):
   name_key=prefix+"material"
 
-  if inputs.get(name_key):
+  if name_key in inputs and inputs[name_key]:
     return get_material(inputs[name_key])
 
   density = inputs[prefix+"density"]
   C0=inputs[prefix+"C0"]
-  S = inputs.get(prefix + "S", 0.0)
-  return Material (density, C0, S, name=inputs.get(name_key, ""))
+  if  (prefix + "S") in inputs:
+    S = inputs[prefix + "S"]
+  else: 
+    S = 0.0 #if S is missing, assume 0
+  return Material (density, C0, S)
 
-def materials_from_confrig(inputs): 
-  target = material_from_confrig(inputs, prefix="")
+def materials_from_config(inputs): 
+  target = material_from_config(inputs, "")
   flyer_given= False
   if"flyer_material" in inputs and inputs ["flyer_material"] !="":
     flyer_given =True
@@ -36,7 +39,7 @@ def materials_from_confrig(inputs):
     flyer_given = True
 
   if flyer_given: 
-    flyer = material_from_confrig(inputs, prefix="flyer")
+    flyer = material_from_config(inputs, prefix="flyer")
   else: 
     flyer = target
   return flyer, target

@@ -30,7 +30,7 @@ def particle_velocity(flyer_velocity, flyer, target=None):
   V=flyer_velocity
   if V < 0: 
     raise ValueError ("flyer_velocity must be 0 or positive")
-  if check_case1(flyer, target):  #same material on both sides
+  if is_symmetric_impact(flyer, target):  #same material on both sides
     return V/2
   #Different materials-->solve a*u_p^2 + b*u_p + c = 0
   a=target.density*target.S - flyer.density*flyer.S

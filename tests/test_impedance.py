@@ -38,16 +38,17 @@ def test_stiff_vs_soft_direction():
   assert particle_velocity(1000.0, GLASS, COPPER) < 500.0
 
 def test_is_symmetric_impact():
-  assert check_case1 (COPPER, None) is True #no sample given
-  assert check_case1 (COPPER, COPPER) is True #same material
-  assert check_case1 (COPPER, GLASS) is False #different materials
+  assert is_symmetric_impact (COPPER, None) is True #no sample given
+  assert is_symmetric_impact (COPPER, COPPER) is True #same material
+  assert is_symmetric_impact (COPPER, GLASS) is False #different materials
 
 def test_case1_higher_impedance_target():
-  assert check_case1(COPPER, TITANIUM) is True #into stiffer target
-  assert check_case1(TITANIUM, COPPER) is False #into softer target
+  assert check_case1(COPPER, TITANIUM) is False #into softer target (Ti < Cu)
+  assert check_case1(TITANIUM, COPPER) is True #into stiffer target (Cu > Ti)
+  assert check_case1 (GLASS, COPPER) is True #into stiffer target(Cu > glass)
   assert check_case1(COPPER, GLASS) is False #copper into softer material
   assert check_case1(COPPER, COPPER) is False #same material
-  assert check_case1(COPPER, None) is False  
+  assert check_case1(COPPER, None) is False 
   
 def test_zero_speed_gives_zero():
   assert particle_velocity(0.0, COPPER, GLASS) == 0.0

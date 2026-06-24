@@ -22,7 +22,7 @@ def is_symmetric_impact (flyer,target):
 def check_case1 (flyer, target):
   if target is None: 
     return False
-  flyer_impedance=flyer.density*flyer.C0
+  flyer_impedance = flyer.density*flyer.C0
   target_impedance = target.density*target.C0
   return target_impedance > flyer_impedance
   
@@ -34,8 +34,8 @@ def particle_velocity(flyer_velocity, flyer, target=None):
     return V/2
   #Different materials-->solve a*u_p^2 + b*u_p + c = 0
   a=target.density*target.S - flyer.density*flyer.S
-  b=(target.density*target.C0+2*flyer.density*flyer.S*V)
-  C=-flyer.density*V*(flyer.C0+flyer.S*V)
+  b=(target.density*target.C0+flyer.density*flyer.C0+2*flyer.density*flyer.S*V)
+  c=-flyer.density*V*(flyer.C0+flyer.S*V)
   if abs(a) < 1e-12:  #if a is around 0 the u_p^2 term disappears
     return -c/b
   #otherwise-->quadratic formula to solve

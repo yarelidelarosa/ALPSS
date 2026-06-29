@@ -77,4 +77,4 @@ if __name__=="__main__":
   test_zero_speed_gives_zero()
   test_negative_speed_is_rejected()
   test_bad_material_is_rejected()
-  print ("tests passed")
+  print ("all tests passed")

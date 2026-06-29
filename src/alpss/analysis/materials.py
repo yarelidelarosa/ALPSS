@@ -2,6 +2,8 @@ from alpss.analysis.impedance import Material
 MATERIAL_TABLE = {
   "copper": (8960.0, 3958.37, 1.489), 
   "aluminum": (2700.0, 4830.46, 1.338), 
+  "glass": (2440, 4198, 1.61),
+  "titanium": (4510.0, 4961.0,  0.957),
 }
 def list_materials():
   return sorted(MATERIAL_TABLE.keys())
@@ -39,7 +41,7 @@ def materials_from_config(inputs):
     flyer_given = True
 
   if flyer_given: 
-    flyer = material_from_config(inputs, prefix="flyer")
+    flyer = material_from_config(inputs, prefix="flyer_")
   else: 
     flyer = target
   return flyer, target

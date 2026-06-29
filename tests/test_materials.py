@@ -62,4 +62,14 @@ def test_database_materials_works_with_particle_velocity():
     glass_byhand = Material(2440, 4198, 1.61)
     assert close (u_p, particle_velocity(1000.0, cu_byhand, glass_byhand))
 
-if__name__=="__main__": 
+if __name__=="__main__":
+    test_get_material_values()
+    test_get_material_not_case_sensitive()
+    test_unknown_material_is_rejected()
+    test_list_materials()
+    test_material_from_config_by_numbers()
+    test_material_from_config_flyer_prefix()
+    test_no_flyer_means_same_as_sample()
+    test_flyer_and_target_differ()
+    test_database_materials_works_with_particle_velocity()
+    print ("all tests passed")

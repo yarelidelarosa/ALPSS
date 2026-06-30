@@ -16,7 +16,7 @@ def get_material(name):
       "Known materials are:"+", ".join(list_materials())
     )
   density, C0, S = MATERIAL_TABLE[key]
-  return Material(density, C0, S, name)
+  return Material(density, C0, S, name) 
 
 def material_from_config(inputs, prefix=""):
   name_key=prefix+"material"

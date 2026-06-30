@@ -9,7 +9,7 @@ class Material: #stores 3 shock numbers a material needs:
     self.density=density
     self.C0=C0
     self.S=S
-    self.name=name
+    self.name=name 
 def is_symmetric_impact (flyer,target):
   #return TRUE if lfyer and sample are same material
   # answer is V/2 in that case
